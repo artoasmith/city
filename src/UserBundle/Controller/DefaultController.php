@@ -81,7 +81,7 @@ class DefaultController extends BaseController
         if(false === ($response = $cache->fetch($key)) && $response != $auth_token)
             return $this->buildErrorResponse('invalidData');
 
-        $pattern = '/(\d\d)(\d+)(X)/is';
+        $pattern = '/^(\d\d)(\d+)(X)/is';
         \preg_match_all($pattern, trim($auth_client).' ', $matches, PREG_SET_ORDER);
 
         if(!isset($matches[0]) || !isset($matches[0][2]) || $matches[0][2]<=0)
