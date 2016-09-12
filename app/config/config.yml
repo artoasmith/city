@@ -9,7 +9,9 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: ru
-
+    auth_token_lifetime:   30
+    access_token_lifetime: 900
+    client_token_lifetime: 1209600
 
 framework:
     #esi:             ~

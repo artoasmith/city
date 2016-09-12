@@ -1,0 +1,4 @@
+services:
+#    api_error.example:
+#        class: ApiErrorBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

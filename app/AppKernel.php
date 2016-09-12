@@ -22,6 +22,7 @@ class AppKernel extends Kernel
 
             new AdminBundle\AdminBundle(),
             new UserBundle\UserBundle(),
+            new ApiErrorBundle\ApiErrorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
