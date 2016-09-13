@@ -29,7 +29,7 @@ class BaseController extends FOSRestController
         $accessToken = $this->getDoctrine()
                             ->getRepository('UserBundle:AccessToken')
                             ->findOneBy(['token'=>$accessToken]);
-        if(!$accessToken || $accessToken->getDate()->getTimestamp()<time()) {
+        if(!$accessToken || $accessToken->getDate()->getTimestamp()<time() || $accessToken->getUserAgent() != $request->server->get('HTTP_USER_AGENT')) {
             $u = $this->getUser();
             if($u){
                 $client = new Client();
@@ -87,7 +87,7 @@ class BaseController extends FOSRestController
 
         $cache->save($key,$auth_token,$this->getParameter('auth_token_lifetime'));
 
-        return ['auth_client'=>$auth_client, 'auth_token'=>$auth_token];
+        return ['authClient'=>$auth_client, 'authToken'=>$auth_token];
     }
 
     /**
@@ -119,7 +119,7 @@ class BaseController extends FOSRestController
      * @param object $manager
      * @return AccessToken
      */
-    public function accessTokenGenerate(Client $client, $manager = null){
+    public function accessTokenGenerate(Client $client, $manager = null,Request $request=null){
         $token = md5('accessToken'.time().$this->getParameter('secret').rand(1,100));
         $time = new \DateTime();
         $time->modify(sprintf('+%d sec',$this->getParameter('access_token_lifetime')));
@@ -127,7 +127,8 @@ class BaseController extends FOSRestController
         $accessToken = new AccessToken();
         $accessToken->setClient($client)
                     ->setDate($time)
-                    ->setToken($token);
+                    ->setToken($token)
+                    ->setUserAgent($request?$request->server->get('HTTP_USER_AGENT'):'');
 
         if(!$manager)
             $manager = $this->getDoctrine()->getManager();

@@ -5,6 +5,7 @@ namespace UserBundle\Controller;
 use ApiErrorBundle\Entity\Error;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use UserBundle\Entity\AccessToken;
 use UserBundle\Entity\User;
 use UserBundle\Entity\Client;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -26,7 +27,7 @@ class DefaultController extends BaseController
      * @QueryParam(name="clientId", description="Client id")
      * @QueryParam(name="clientSecret", description="Client secret string")
      * @param Request $request
-     * @POST("/refresh_token")
+     * @POST("/refreshToken")
      * @return mixed
      */
     public function refreshTokenAction(Request $request)
@@ -35,15 +36,20 @@ class DefaultController extends BaseController
         $client_secret = $request->request->get('clientSecret');
         /**
          * @var Client $client
+         * @var AccessToken $at
          */
         $client = $this->getDoctrine()->getRepository('UserBundle:Client')->findOneBy(['id'=>$client_id,'secret'=>$client_secret]);
         if(!$client)
             return $this->buildErrorResponse('invalidData');
 
-        foreach ($client->getAccessToken()->toArray() as $at)
-            $client->removeAccessToken($at);
 
-        $accessToken = $this->accessTokenGenerate($client);
+        $time = time();
+        foreach ($client->getAccessToken()->toArray() as $at) {
+            if($at->getDate()->getTimestamp()<$time)
+                $client->removeAccessToken($at);
+        }
+
+        $accessToken = $this->accessTokenGenerate($client, null, $request);
 
         $view = $this->view(
             [
@@ -64,7 +70,7 @@ class DefaultController extends BaseController
      * )
      * @QueryParam(name="authClient", description="Auth client string")
      * @QueryParam(name="authToken", description="Auth token")
-     * @POST("/auth_client")
+     * @POST("/authClient")
      */
     public function authClientAction(Request $request)
     {
@@ -96,7 +102,7 @@ class DefaultController extends BaseController
 
         $cache->delete($key);
         $client = $this->clientGenerate($user);
-        $accessToken = $this->accessTokenGenerate($client);
+        $accessToken = $this->accessTokenGenerate($client,null,$request);
 
         $view = $this->view(
             [

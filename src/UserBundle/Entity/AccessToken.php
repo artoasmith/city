@@ -46,6 +46,12 @@ class AccessToken
     private $token;
 
     /**
+     * @var string
+     * @ORM\Column(name="userAgent", type="string", length=1024, nullable=false)
+     */
+    private $userAgent;
+
+    /**
      * Get id
      *
      * @return integer
@@ -124,5 +130,29 @@ class AccessToken
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Set userAgent
+     *
+     * @param string $userAgent
+     *
+     * @return AccessToken
+     */
+    public function setUserAgent($userAgent)
+    {
+        $this->userAgent = $userAgent;
+
+        return $this;
+    }
+
+    /**
+     * Get userAgent
+     *
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        return $this->userAgent;
     }
 }
