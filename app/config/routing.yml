@@ -1,3 +1,8 @@
+file:
+    resource: "@FileBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /documentation
