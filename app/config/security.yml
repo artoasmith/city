@@ -5,8 +5,12 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_ADMIN:
+            - ROLE_USER
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+
+
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         fos_userbundle:
@@ -16,10 +20,17 @@ security:
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
+        oauth_token:                                   # Everyone can access the access token URL.
+            pattern: ^/oauth/v2/token
+            security: false
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
+        test:
+            pattern: ^/t                                # All URLs are protected
+            fos_oauth: true                            # OAuth2 protected resource
+            stateless: true                            # Do no set session cookies
+            anonymous: false                           # Anonymous access is not allowed
         main:
             pattern: ^/
             anonymous: true

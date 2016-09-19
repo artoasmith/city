@@ -3,6 +3,7 @@
 namespace UserBundle\Controller;
 
 use ApiErrorBundle\Entity\Error;
+use Doctrine\DBAL\Schema\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use UserBundle\Entity\AccessToken;
@@ -15,9 +16,28 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use ApiErrorBundle\Controller\ErrorController;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Doctrine\Common\Cache\PhpFileCache;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Core\SecurityContext;
 
 class DefaultController extends BaseController
 {
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @POST("/t")
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public function getDemosAction()
+    {
+        /**
+         * @var SecurityContext $user
+         */
+        $user = $this->get('security.context')->getToken()->getUser();
+
+        $data = array("hello" => $user);
+        $view = $this->view($data);
+        return $this->handleView($view);
+    }
+
     /**
      * @ApiDoc(
      *     section="Auth methods",

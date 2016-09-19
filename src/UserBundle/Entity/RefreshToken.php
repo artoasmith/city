@@ -2,21 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: N1
- * Date: 09.09.16
- * Time: 15:56
+ * Date: 19.09.16
+ * Time: 09:49
  */
 
 namespace UserBundle\Entity;
 
+use FOS\OAuthServerBundle\Entity\RefreshToken as BaseRefreshToken;
 use Doctrine\ORM\Mapping as ORM;
-use FOS\OAuthServerBundle\Entity\AccessToken as BaseAccessToken;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Table("oauth2_access_tokens")
+ * @ORM\Table("oauth2_refresh_tokens")
  * @ORM\Entity
  */
-class AccessToken extends BaseAccessToken
+class RefreshToken extends BaseRefreshToken
 {
     /**
      * @ORM\Id

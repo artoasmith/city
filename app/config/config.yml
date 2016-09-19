@@ -118,9 +118,9 @@ nelmio_api_doc: ~
 
 fos_oauth_server:
     db_driver:           orm
-    client_class:        Acme\ApiBundle\Entity\Client
-    access_token_class:  Acme\ApiBundle\Entity\AccessToken
-    refresh_token_class: Acme\ApiBundle\Entity\RefreshToken
-    auth_code_class:     Acme\ApiBundle\Entity\AuthCode
+    client_class:        UserBundle\Entity\Client
+    access_token_class:  UserBundle\Entity\AccessToken
+    refresh_token_class: UserBundle\Entity\RefreshToken
+    auth_code_class:     UserBundle\Entity\AuthCode
     service:
         user_provider: fos_user.user_manager             # This property will be used when valid credentials
