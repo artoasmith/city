@@ -13,6 +13,12 @@ $kernel->loadClassCache();
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
 //Request::enableHttpMethodParameterOverride();
 $request = Request::createFromGlobals();
+
+if(strpos($request->getRequestUri(),'/?_escaped_fragment_=/')===0) {
+    $_SERVER['REQUEST_URI'] = $request->query->get('_escaped_fragment_');
+    $request = Request::createFromGlobals();
+}
+
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);

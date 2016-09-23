@@ -24,6 +24,9 @@ DirectoryIndex app.php
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    #RewriteCond %{QUERY_STRING} ^/?_escaped_fragment_=/(.*)$
+    #RewriteRule  ^$ /app_dev.php/%1 [QSA,L]
+
     # Determine the RewriteBase automatically and set it as environment variable.
     # If you are using Apache aliases to do mass virtual hosting or installed the
     # project in a subdirectory, the base path will be prepended to allow proper

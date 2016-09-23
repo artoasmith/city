@@ -19,6 +19,7 @@ use Doctrine\Common\Cache\PhpFileCache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\SecurityContext;
 
+
 class DefaultController extends BaseController
 {
     /**
@@ -26,155 +27,32 @@ class DefaultController extends BaseController
      * @POST("/t")
      * @Security("is_granted('ROLE_USER')")
      */
-    public function getDemosAction()
+    public function getDemosAction(Request $request)
     {
         /**
-         * @var SecurityContext $user
+         * @var User $user
          */
         $user = $this->get('security.context')->getToken()->getUser();
 
-        $data = array("hello" => $user);
+        $data = array("hello" => $user, 'l'=>$request->getLocale());
         $view = $this->view($data);
         return $this->handleView($view);
     }
 
     /**
-     * @ApiDoc(
-     *     section="Auth methods",
-     *     resource=true,
-     *     description="Get new access token"
-     * )
-     * @QueryParam(name="clientId", description="Client id")
-     * @QueryParam(name="clientSecret", description="Client secret string")
-     * @param Request $request
-     * @POST("/refreshToken")
-     * @return mixed
+     * @GET("/")
      */
-    public function refreshTokenAction(Request $request)
+    public function getAngularAction(Request $request)
     {
-        $client_id = $request->request->get('clientId');
-        $client_secret = $request->request->get('clientSecret');
-        /**
-         * @var Client $client
-         * @var AccessToken $at
-         */
-        $client = $this->getDoctrine()->getRepository('UserBundle:Client')->findOneBy(['id'=>$client_id,'secret'=>$client_secret]);
-        if(!$client)
-            return $this->buildErrorResponse('invalidData');
-
-
-        $time = time();
-        foreach ($client->getAccessToken()->toArray() as $at) {
-            if($at->getDate()->getTimestamp()<$time)
-                $client->removeAccessToken($at);
-        }
-
-        $accessToken = $this->accessTokenGenerate($client, null, $request);
-
-        $view = $this->view(
-            [
-                'clientId'=>$client->getId(),
-                'clientSecret'=>$client->getSecret(),
-                'accessToken'=>$accessToken->getToken()
-            ],
-            200
-        );
-        return $this->handleView($view);
+        return $this->view(['url'=>$request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
     }
 
     /**
-     * @ApiDoc(
-     *     section="Auth methods",
-     *     resource=true,
-     *     description="Get auth client data"
-     * )
-     * @QueryParam(name="authClient", description="Auth client string")
-     * @QueryParam(name="authToken", description="Auth token")
-     * @POST("/authClient")
+     * @GET("/user/{id}")
      */
-    public function authClientAction(Request $request)
+    public function getTAngularAction(Request $request,$id=0)
     {
-        $auth_client = $request->request->get('authClient');
-        $auth_token = $request->request->get('authToken');
-
-        /**
-         * @var PhpFileCache $cache
-         */
-        $key = sprintf('auth_token_%s',$auth_client);
-        $cache = $this->get('cache');
-        $cache->setNamespace('auth.cache');
-
-        if(false === ($response = $cache->fetch($key)) && $response != $auth_token)
-            return $this->buildErrorResponse('invalidData');
-
-        $pattern = '/^(\d\d)(\d+)(X)/is';
-        \preg_match_all($pattern, trim($auth_client).' ', $matches, PREG_SET_ORDER);
-
-        if(!isset($matches[0]) || !isset($matches[0][2]) || $matches[0][2]<=0)
-            return $this->buildErrorResponse('invalidData');
-
-        /**
-         * @var User $user
-         */
-        $user = $this->getDoctrine()->getRepository('UserBundle:User')->find($matches[0][2]);
-        if(!$user)
-            return $this->buildErrorResponse('invalidData');
-
-        $cache->delete($key);
-        $client = $this->clientGenerate($user);
-        $accessToken = $this->accessTokenGenerate($client,null,$request);
-
-        $view = $this->view(
-            [
-                'clientId'=>$client->getId(),
-                'clientSecret'=>$client->getSecret(),
-                'accessToken'=>$accessToken->getToken()
-            ],
-            200
-        );
-        return $this->handleView($view);
+        return $this->view(['url'=>$request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
     }
 
-    /**
-     * @ApiDoc(
-     *     section="Auth methods",
-     *     resource=true,
-     *     description="Get auth data",
-     * )
-     * @QueryParam(name="authLogin", description="User login")
-     * @QueryParam(name="authPassword", description="User password")
-     * @POST("/auth")
-     */
-    public function authAction(Request $request)
-    {
-        $u = $this->getUser();
-        if($u)
-            return $this->redirect('/');
-
-        $login = $request->request->get('authLogin');
-        $pass = $request->request->get('authPassword');
-        /**
-         * @var User $user
-         */
-        $user = $this->getDoctrine()
-                     ->getRepository('UserBundle:User')
-                     ->findOneBy(['username'=>$login]);
-
-        if(!$user)
-            return $this->buildErrorResponse('invalidAuth');
-
-        $encoder_service = $this->get('security.encoder_factory');
-        $encoder = $encoder_service->getEncoder($user);
-        $encoded_pass = $encoder->encodePassword($pass, $user->getSalt());
-        if($encoded_pass != $user->getPassword())
-            return $this->buildErrorResponse('invalidAuth');
-
-        $authArray = $this->userAuth($user);
-
-        $view = $this->view(
-            $authArray,
-            202
-        );
-        return $this->handleView($view);
-    }
 }

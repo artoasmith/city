@@ -22,9 +22,16 @@ if (isset($_SERVER['HTTP_CLIENT_IP'])
 $loader = require __DIR__.'/../app/autoload.php';
 Debug::enable();
 
+$request = Request::createFromGlobals();
+
+if(strpos($request->getRequestUri(),'/app_dev.php/?_escaped_fragment_=/')===0) {
+    $_SERVER['REQUEST_URI'] = '/app_dev.php'.$request->query->get('_escaped_fragment_');
+    $request = Request::createFromGlobals();
+}
+
 $kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
-$request = Request::createFromGlobals();
+
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
