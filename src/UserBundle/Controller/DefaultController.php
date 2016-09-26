@@ -44,7 +44,7 @@ class DefaultController extends BaseController
      */
     public function getAngularAction(Request $request)
     {
-        return $this->view(['url'=>$request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
+        return $this->view(['url'=>'http://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
     }
 
     /**
@@ -52,7 +52,7 @@ class DefaultController extends BaseController
      */
     public function getTAngularAction(Request $request,$id=0)
     {
-        return $this->view(['url'=>$request->server->get('REQUEST_SCHEME').'://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
+        return $this->view(['url'=>'http://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)->setFormat('html')->setTemplate('UserBundle:Default:index.html.twig');
     }
 
 }
