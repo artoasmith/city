@@ -56,6 +56,12 @@ class File
      */
     private $sourse;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="originalName", type="string", length=255)
+     */
+    private $originalName;
 
     /**
      * Get id
@@ -180,5 +186,28 @@ class File
     public function getSourse()
     {
         return $this->sourse;
+    }
+
+    /**
+     * Set originalName
+     *
+     * @param string $originalName
+     * @return File
+     */
+    public function setOriginalName($originalName)
+    {
+        $this->originalName = $originalName;
+
+        return $this;
+    }
+
+    /**
+     * Get originalName
+     *
+     * @return string
+     */
+    public function getOriginalName()
+    {
+        return $this->originalName;
     }
 }

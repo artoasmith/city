@@ -21,10 +21,10 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
 
-            new AdminBundle\AdminBundle(),
             new UserBundle\UserBundle(),
             new ApiErrorBundle\ApiErrorBundle(),
             new FileBundle\FileBundle(),
+            new ApiBundle\ApiBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

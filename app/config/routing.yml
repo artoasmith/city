@@ -1,6 +1,7 @@
-NelmioApiDocBundle:
-    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
-    prefix:   /documentation
+api:
+    resource: "@ApiBundle/Controller/"
+    type:     annotation
+    prefix:   /
 
 file:
     resource: "@FileBundle/Controller/"
@@ -12,10 +13,9 @@ user:
     type:     annotation
     prefix:   /
 
-admin:
-    resource: "@AdminBundle/Controller/"
-    type:     annotation
-    prefix:   /
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /documentation
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
