@@ -210,4 +210,26 @@ class File
     {
         return $this->originalName;
     }
+
+    public function getFile(){
+        return $this->getFolder().$this->getSourse();
+    }
+
+    public function deleteFile(){
+        unlink($this->getFile());
+        $dirPath = sprintf('%s/%d/',$this->getFolder(),$this->getId());
+        self::deleteDir($dirPath);
+    }
+
+    public static function deleteDir($dir){
+        $files = glob($dir . '*', GLOB_MARK);
+        foreach ($files as $file) {
+            if (is_dir($file)) {
+                self::deleteDir($file);
+            } else {
+                unlink($file);
+            }
+        }
+        rmdir($dir);
+    }
 }

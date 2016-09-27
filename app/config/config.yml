@@ -124,3 +124,5 @@ fos_oauth_server:
     auth_code_class:     UserBundle\Entity\AuthCode
     service:
         user_provider: fos_user.user_manager             # This property will be used when valid credentials
+
+gregwar_image: ~
