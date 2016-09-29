@@ -5,21 +5,20 @@ namespace FileBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use FileBundle\Entity\File;
 
 class DefaultController extends Controller
 {
-    const PIC_TYPE = 'picture';
-    const FILE_TYPE = 'file';
-
     /**
      * @param $files
      * @param $folder
      * @return array
      */
-    static function upload($files,$folder){
+    static function upload($files,$folder,$expectedType=false){
         if(!$files)
             throw new FileException('Пустые данные');
 
@@ -31,9 +30,10 @@ class DefaultController extends Controller
          */
         foreach ($files as $file){
             $expansion = DefaultController::getExpansion($file->getMimeType());
-            if(!$expansion)
+            if(!$expansion || ($expectedType && $expectedType != $expansion))
                 throw  new FileException('Недопустимый тип');
         }
+
         $res = [];
         $folder = str_replace('//','/',sprintf('upload/%s/',$folder));
         foreach ($files as $file){
@@ -77,11 +77,11 @@ class DefaultController extends Controller
      */
     static function getExpansion($type){
         $types = [
-            self::PIC_TYPE => [
+            File::PIC_TYPE => [
                 'image/png',
                 'image/jpeg'
             ],
-            self::FILE_TYPE => [
+            File::FILE_TYPE => [
 
             ]
         ];

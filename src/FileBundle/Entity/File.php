@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class File
 {
+    const PIC_TYPE = 'picture';
+    const FILE_TYPE = 'file';
+    const FILE_PREFIX = 'http://city.loc/';
     /**
      * @var int
      *
@@ -215,10 +218,15 @@ class File
         return $this->getFolder().$this->getSourse();
     }
 
+    public function getUrl(){
+        return self::FILE_PREFIX.$this->getFile();
+    }
+
     public function deleteFile(){
-        unlink($this->getFile());
+        @unlink($this->getFile());
         $dirPath = sprintf('%s/%d/',$this->getFolder(),$this->getId());
         self::deleteDir($dirPath);
+        return $this;
     }
 
     public static function deleteDir($dir){
@@ -230,6 +238,6 @@ class File
                 unlink($file);
             }
         }
-        rmdir($dir);
+        @rmdir($dir);
     }
 }

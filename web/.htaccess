@@ -17,8 +17,8 @@ DirectoryIndex app.php
     Options -MultiViews
 </IfModule>
 
-<IfModule mod_php5.c>
-    php_value memory_limit 512M
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
 </IfModule>
 
 <IfModule mod_rewrite.c>

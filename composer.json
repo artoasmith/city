@@ -27,7 +27,9 @@
         "nelmio/api-doc-bundle": "^2.13",
         "jms/serializer-bundle": "^1.1",
         "friendsofsymfony/oauth-server-bundle": "^1.5",
-        "gregwar/image-bundle": "^2.1"
+        "gregwar/image-bundle": "^2.1",
+        "propel/propel-bundle": "^1.5",
+        "nelmio/cors-bundle": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

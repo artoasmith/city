@@ -21,11 +21,14 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new Gregwar\ImageBundle\GregwarImageBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
 
             new UserBundle\UserBundle(),
             new ApiErrorBundle\ApiErrorBundle(),
             new FileBundle\FileBundle(),
             new ApiBundle\ApiBundle(),
+            new NewsBundle\NewsBundle(),
+            new CommentsBundle\CommentsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

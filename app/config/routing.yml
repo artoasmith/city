@@ -1,3 +1,13 @@
+comments:
+    resource: "@CommentsBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+news:
+    resource: "@NewsBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 api:
     resource: "@ApiBundle/Controller/"
     type:     annotation

@@ -36,6 +36,7 @@ class DefaultController extends FOSRestController
             $view = $this->view(['error'=>$e->getMessage()],422);
             return $this->handleView($view);
         }
+
         /**
          * @var ImageHandling $imageHandling
          * @var File $file
@@ -49,7 +50,7 @@ class DefaultController extends FOSRestController
             $file->deleteFile();
         }
         $data = array("hello" => $files);
-        //var_dump($data); exit();
+
         $view = $this->view($data);
         return $this->handleView($view);
     }

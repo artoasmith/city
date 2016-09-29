@@ -12,6 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Error
 {
+    const NOT_FOUND_CODE = 404;
+    const NOT_ALLOWED = 403;
+    const FORM_ERROR_CODE = 400;
+    const SUCCESS_POST_CODE = 201;
+    const SUCCESS_PUT_CODE = 202;
+    const SUCCESS_DELETE_CODE = 204;
+    const SUCCESS_GET_CODE = 200;
+    const NOT_FOUNT_TEXT = 'не найдено';
+
     /**
      * @var int
      *

@@ -9,5 +9,7 @@
 /build/
 /vendor/
 /bin/
+/web/cache/
+/web/upload/
 /composer.phar
 /.idea/*
