@@ -1,6 +1,6 @@
 <?php
 
-namespace NewsBundle\Entity;
+namespace UniversityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -10,8 +10,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * Section
  *
- * @ORM\Table(name="news_section")
- * @ORM\Entity(repositoryClass="NewsBundle\Repository\SectionRepository")
+ * @ORM\Table(name="uni_section")
+ * @ORM\Entity(repositoryClass="UniversityBundle\Repository\SectionRepository")
  */
 class Section
 {
@@ -51,7 +51,7 @@ class Section
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -62,6 +62,7 @@ class Section
      * Set title
      *
      * @param string $title
+     *
      * @return Section
      */
     public function setTitle($title)
@@ -80,6 +81,7 @@ class Section
     {
         return $this->title;
     }
+
 
     /**
      * Set parentSection
@@ -162,3 +164,4 @@ class Section
         return $this->checkSectionStrict($section->getParentSection(),$max_insert_count);
     }
 }
+

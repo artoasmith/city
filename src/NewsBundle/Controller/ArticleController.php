@@ -2,7 +2,6 @@
 
 namespace NewsBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use NewsBundle\Entity\Article;
 use ApiErrorBundle\Entity\Error;
@@ -16,15 +15,15 @@ use NewsBundle\Form\Type\ArticleType;
 use NewsBundle\Form\Type\ArticlePictureType;
 use FOS\RestBundle;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use ApiBundle\Controller\DefaultController as ApiController;
 
-class ArticleController extends FOSRestController
+class ArticleController extends ApiController
 {
     /**
      * @ApiDoc(
      *  section="News",
      *  resource=true,
-     *  description="Delete article element",
-     *  input="NewsBundle\Form\SectionType"
+     *  description="Delete article element picture",
      * )
      * @Annotations\Delete("/api/news_articles/{id}/files/{file_id}");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_UPDATE')")
@@ -87,6 +86,7 @@ class ArticleController extends FOSRestController
         if($pic = array_shift($files))
             $manager->persist($pic);
 
+        $article->setUser($this->get('security.context')->getToken()->getUser());
         $article->setPicture($pic);
         $manager->persist($article);
         $manager->flush();
@@ -112,6 +112,8 @@ class ArticleController extends FOSRestController
         * @var Article $article
         */
         $article = $form->getData();
+
+        $article->setSections($this->checkSectionArray($article->getSections(),'NewsBundle:Section'));
 
         $errors = $this->get('validator')->validate($article);
         if (count($errors) > 0)
@@ -158,6 +160,8 @@ class ArticleController extends FOSRestController
             ->handleRequest($request);
         $article = $form->getData();
 
+        $article->setSections($this->checkSectionArray($article->getSections(),'NewsBundle:Section'));
+
         $errors = $this->get('validator')->validate($article);
         if (count($errors) > 0)
             return $this->view(['error'=>$errors],Error::FORM_ERROR_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
@@ -198,5 +202,51 @@ class ArticleController extends FOSRestController
         $manager->flush();
 
         return $this->view(['article'=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+    }
+
+
+
+    /**
+     * @ApiDoc(
+     *  section="News",
+     *  resource=true,
+     *  description="Get article elements"
+     * )
+     * @Annotations\Get("/api/news_articles");
+     * @Annotations\QueryParam(name="article[id]", description="element object")
+     * @Annotations\QueryParam(name="article[title]", description="element title")
+     * @Annotations\QueryParam(name="article[date]", description="element date")
+     * @Annotations\QueryParam(name="article[tags]", description="element tags")
+     * @Annotations\QueryParam(name="article[text]", description="element text")
+     * @Annotations\QueryParam(name="article[sections]", description="element sections")
+     * @Annotations\QueryParam(name="_sort", default={"id":"ASC"})
+     * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
+     * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
+     */
+    public function getArticlesList(Request $request)
+    {
+        $arr = $request->query->all();
+        return $this->view(['articles'=>$this->matching('article','NewsBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
+                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+    }
+
+    /**
+     * @ApiDoc(
+     *  section="News",
+     *  resource=true,
+     *  description="Get article element"
+     * )
+     * @Annotations\Get("/api/news_articles/{id}");
+     */
+    public function getArticles(Request $request,$id=0)
+    {
+        /**
+         * @var Article $article
+         */
+        $article = $this->getDoctrine()->getRepository('NewsBundle:Article')->find($id);
+        if(!$article)
+            return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
+
+        return $this->view(['article'=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

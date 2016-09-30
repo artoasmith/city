@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: N1
- * Date: 28.09.16
- * Time: 10:41
- */
 
-namespace NewsBundle\Controller;
+namespace UniversityBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use NewsBundle\Entity\Section;
+use UniversityBundle\Form\Type\SectionType;
+use UniversityBundle\Entity\Section;
 use ApiErrorBundle\Entity\Error;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use FOS\RestBundle\Controller\Annotations;
-use NewsBundle\Form\Type\SectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use FOS\RestBundle;
 use ApiBundle\Controller\DefaultController as ApiController;
@@ -24,18 +18,18 @@ class SectionController extends ApiController
 {
     /**
      * @ApiDoc(
-     *  section="News",
+     *  section="University",
      *  resource=true,
-     *  description="Create article section",
-     *  input="NewsBundle\Form\Type\SectionType"
+     *  description="Create event section",
+     *  input="UniversityBundle\Form\Type\SectionType"
      * )
-     * @Annotations\Post("/api/news_sections");
-     * @Security("is_granted('ROLE_NEWS_SECTION_CREATE')")
+     * @Annotations\Post("/api/uni_sections");
+     * @Security("is_granted('ROLE_UNI_SECTION_CREATE')")
      */
     public function postSections(Request $request)
     {
         $form = $this->createForm(new SectionType(),new Section())
-            ->handleRequest($request);
+                     ->handleRequest($request);
         /**
          * @var Section $section
          */
@@ -58,20 +52,20 @@ class SectionController extends ApiController
 
     /**
      * @ApiDoc(
-     *  section="News",
+     *  section="University",
      *  resource=true,
-     *  description="Update article section",
-     *  input="NewsBundle\Form\Type\SectionType"
+     *  description="Update event section",
+     *  input="UniversityBundle\Form\Type\SectionType"
      * )
-     * @Annotations\Put("/api/news_sections/{id}");
-     * @Security("is_granted('ROLE_NEWS_SECTION_UPDATE')")
+     * @Annotations\Put("/api/uni_sections/{id}");
+     * @Security("is_granted('ROLE_UNI_SECTION_UPDATE')")
      */
     public function putSections(Request $request,$id=0)
     {
         /**
          * @var Section $section
          */
-        $section = $this->getDoctrine()->getRepository('NewsBundle:Section')->find($id);
+        $section = $this->getDoctrine()->getRepository('UniversityBundle:Section')->find($id);
         if(!$section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
@@ -94,19 +88,19 @@ class SectionController extends ApiController
 
     /**
      * @ApiDoc(
-     *  section="News",
+     *  section="University",
      *  resource=true,
-     *  description="Delete article section"
+     *  description="Delete event section"
      * )
-     * @Annotations\Delete("/api/news_sections/{id}");
-     * @Security("is_granted('ROLE_NEWS_SECTION_DELETE')")
+     * @Annotations\Delete("/api/uni_sections/{id}");
+     * @Security("is_granted('ROLE_UNI_SECTION_DELETE')")
      */
     public function deleteSections(Request $request,$id=0)
     {
         /**
          * @var Section $section
          */
-        $section = $this->getDoctrine()->getRepository('NewsBundle:Section')->find($id);
+        $section = $this->getDoctrine()->getRepository('UniversityBundle:Section')->find($id);
         if(!$section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
@@ -119,7 +113,7 @@ class SectionController extends ApiController
 
     /**
      * @ApiDoc(
-     *  section="News",
+     *  section="University",
      *  resource=true,
      *  description="Get article sections"
      * )
@@ -129,29 +123,29 @@ class SectionController extends ApiController
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
      *
-     * @Annotations\Get("/api/news_sections")
+     * @Annotations\Get("/api/uni_sections")
      */
     public function getSections(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view(['sections'=>$this->matching('section','NewsBundle:Section', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view(['sections'=>$this->matching('section','UniversityBundle:Section', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
      * @ApiDoc(
-     *  section="News",
+     *  section="University",
      *  resource=true,
      *  description="Get article element"
      * )
-     * @Annotations\Get("/api/news_sections/{id}");
+     * @Annotations\Get("/api/uni_sections/{id}");
      */
     public function getArticles(Request $request,$id=0)
     {
         /**
          * @var Section $article
          */
-        $Section = $this->getDoctrine()->getRepository('NewsBundle:Section')->find($id);
+        $Section = $this->getDoctrine()->getRepository('UniversityBundle:Section')->find($id);
         if(!$Section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 

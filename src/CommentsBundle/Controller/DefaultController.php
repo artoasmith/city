@@ -168,27 +168,7 @@ class DefaultController extends FOSRestController
      *  resource=true,
      *  description="Get comment"
      * )
-     * @Annotations\Get("/api/comments/{id}");
-     */
-    public function getComments(Request $request,$id=0)
-    {
-        /**
-         * @var Comment $comment
-         */
-        $comment = $this->getDoctrine()->getRepository('CommentsBundle:Comment')->find($id);
-        if(!$comment)
-            return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
-
-        return $this->view(['comment'=>$comment],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
-    }
-
-    /**
-     * @ApiDoc(
-     *  section="Comments",
-     *  resource=true,
-     *  description="Get comment"
-     * )
-     * @Annotations\Get("/api/comments2");
+     * @Annotations\Get("/api/comments");
      *
      * @Annotations\QueryParam(name="page",  requirements="\d+", description="Page")
      * @Annotations\QueryParam(name="parentComment",  requirements="\d+", description="Parent comment id")
@@ -242,5 +222,25 @@ class DefaultController extends FOSRestController
                 ApiBundle::META_ELEMENTS_LEFT_KEY=>$elementsLeft
             ]
         ],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+    }
+
+    /**
+     * @ApiDoc(
+     *  section="Comments",
+     *  resource=true,
+     *  description="Get comment"
+     * )
+     * @Annotations\Get("/api/comments/{id}");
+     */
+    public function getComments(Request $request,$id=0)
+    {
+        /**
+         * @var Comment $comment
+         */
+        $comment = $this->getDoctrine()->getRepository('CommentsBundle:Comment')->find($id);
+        if(!$comment)
+            return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
+
+        return $this->view(['comment'=>$comment],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

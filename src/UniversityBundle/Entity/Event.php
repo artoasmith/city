@@ -1,6 +1,6 @@
 <?php
 
-namespace NewsBundle\Entity;
+namespace UniversityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FileBundle\Entity\File;
@@ -10,15 +10,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use NewsBundle\NewsBundle;
 
+
 /**
- * Article
+ * Event
  *
- * @ORM\Table(name="news_article")
- * @ORM\Entity(repositoryClass="NewsBundle\Repository\ArticleRepository")
+ * @ORM\Table(name="uni_event")
+ * @ORM\Entity(repositoryClass="UniversityBundle\Repository\EventRepository")
  */
-class Article
+class Event
 {
-    const DEF_PICTURE_FOLDER = 'images/newsArticle';
+    const ARCHIVE_STATUS = 'archive';
+    const DEF_PICTURE_FOLDER = 'images/uniEvent';
 
     /**
      * @var int
@@ -35,6 +37,7 @@ class Article
      * @ORM\Column(name="title", type="string", length=2048)
      */
     private $title;
+
 
     /**
      * @var \FileBundle\Entity\File
@@ -60,6 +63,13 @@ class Article
     private $date;
 
     /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="description", type="text")
+     */
+    private $description;
+
+    /**
      * @var array
      *
      * @ORM\Column(name="tags", type="array", nullable=true)
@@ -67,28 +77,18 @@ class Article
     private $tags;
 
     /**
-     * @var string
+     * @var int
      * @Assert\NotBlank()
-     * @ORM\Column(name="text", type="text")
+     * @ORM\Column(name="duration", type="integer")
      */
-    private $text;
+    private $duration;
 
     /**
      * @var array
-     * @Assert\NotBlank()
-     * @ORM\Column(name="sections", type="array")
+     *
+     * @ORM\Column(name="status", type="string", length=255, nullable=true)
      */
-    private $sections;
-
-    /**
-     * @var \CommentsBundle\Entity\Page
-     * @Serializer\Exclude()
-     * @ORM\ManyToOne(targetEntity="\CommentsBundle\Entity\Page")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="commentPage", referencedColumnName="id",onDelete="SET NULL")
-     * })
-     */
-    private $commentPage;
+    private $status;
 
     /**
      * @var \UserBundle\Entity\User
@@ -101,9 +101,26 @@ class Article
     private $user;
 
     /**
+     * @var \CommentsBundle\Entity\Page
+     * @Serializer\Exclude()
+     * @ORM\ManyToOne(targetEntity="\CommentsBundle\Entity\Page")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="commentPage", referencedColumnName="id",onDelete="SET NULL")
+     * })
+     */
+    private $commentPage;
+
+    /**
+     * @var array
+     * @Assert\NotBlank()
+     * @ORM\Column(name="sections", type="array")
+     */
+    private $sections;
+
+    /**
      * Get id
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -114,7 +131,8 @@ class Article
      * Set title
      *
      * @param string $title
-     * @return Article
+     *
+     * @return Event
      */
     public function setTitle($title)
     {
@@ -126,7 +144,7 @@ class Article
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -134,10 +152,130 @@ class Article
     }
 
     /**
+     * Set date
+     *
+     * @param \DateTime $date
+     *
+     * @return Event
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Event
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set tags
+     *
+     * @param array $tags
+     *
+     * @return Event
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return array
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set duration
+     *
+     * @param integer $duration
+     *
+     * @return Event
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * Get duration
+     *
+     * @return int
+     */
+    public function getDuration()
+    {
+        return $this->duration;
+    }
+
+    /**
+     * Set status
+     *
+     * @param string $status
+     *
+     * @return Event
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * Set picture
      *
      * @param \FileBundle\Entity\File $picture
-     * @return Article
+     * @return Event
      */
     public function setPicture(\FileBundle\Entity\File $picture = null)
     {
@@ -155,98 +293,6 @@ class Article
     public function getPicture()
     {
         return $this->picture;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return Article
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime 
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
-
-    /**
-     * Set tags
-     *
-     * @param array $tags
-     * @return Article
-     */
-    public function setTags($tags)
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * Get tags
-     *
-     * @return array 
-     */
-    public function getTags()
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Set text
-     *
-     * @param string $text
-     * @return Article
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Get text
-     *
-     * @return string 
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * Set sections
-     *
-     * @param array $sections
-     * @return Article
-     */
-    public function setSections($sections)
-    {
-        $this->sections = $sections;
-
-        return $this;
-    }
-
-    /**
-     * Get sections
-     *
-     * @return array 
-     */
-    public function getSections()
-    {
-        return $this->sections;
     }
 
     /**
@@ -275,7 +321,7 @@ class Article
      * Set commentPage
      *
      * @param \CommentsBundle\Entity\Page $commentPage
-     * @return Article
+     * @return Event
      */
     public function setCommentPage(\CommentsBundle\Entity\Page $commentPage = null)
     {
@@ -314,17 +360,20 @@ class Article
 
     /**
      * @param mixed $pictureFile
+     * @return Event
      */
     public function setPictureFile($pictureFile)
     {
         $this->pictureFile = $pictureFile;
+
+        return $this;
     }
 
     /**
      * Set user
      *
      * @param \UserBundle\Entity\User $user
-     * @return Article
+     * @return Event
      */
     public function setUser(\UserBundle\Entity\User $user = null)
     {
@@ -354,37 +403,40 @@ class Article
     }
 
     /**
+     * Set sections
+     *
+     * @param array $sections
+     * @return Event
+     */
+    public function setSections($sections)
+    {
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     * Get sections
+     *
+     * @return array
+     */
+    public function getSections()
+    {
+        return $this->sections;
+    }
+
+    /**
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context)
     {
-        if($this->sections)
-            $this->sections = array_filter($this->sections);
-
-        if($this->sections && !empty($this->sections)) {
-            $em = NewsBundle::getContainer()->get('doctrine')->getManager();
-            $stmt = $em->getConnection()
-               ->prepare(
-                   sprintf('
-                        SELECT id FROM `news_section`
-                        WHERE id IN (%s)
-                    ',
-                       implode(', ',$this->sections)
-                   )
-               );
-            $stmt->execute();
-            $ideas = $stmt->fetchAll();
-
-            if(!$ideas) {
+        if($this->date) {
+            if($this->date->getTimestamp() < time()) {
                 $context->buildViolation('Недопустимое значение')
-                    ->atPath('sections')
+                    ->atPath('date')
                     ->addViolation();
-            } else {
-                $resp = [];
-                foreach ($ideas as $element)
-                    $resp[] = $element['id'];
-                $this->sections = $resp;
             }
         }
     }
 }
+

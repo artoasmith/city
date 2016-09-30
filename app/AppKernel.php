@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new ApiBundle\ApiBundle(),
             new NewsBundle\NewsBundle(),
             new CommentsBundle\CommentsBundle(),
+            new UniversityBundle\UniversityBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

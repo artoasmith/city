@@ -1,3 +1,8 @@
+university:
+    resource: "@UniversityBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 comments:
     resource: "@CommentsBundle/Controller/"
     type:     annotation
