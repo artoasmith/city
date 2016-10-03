@@ -14,6 +14,8 @@ class File
 {
     const PIC_TYPE = 'picture';
     const FILE_TYPE = 'file';
+    const PDF_TYPE = 'pdf';
+
     const FILE_PREFIX = 'http://city.loc/';
     /**
      * @var int

@@ -10,10 +10,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * Section
  *
- * @ORM\Table(name="uni_section")
+ * @ORM\Table(name="uni_event_section")
  * @ORM\Entity(repositoryClass="UniversityBundle\Repository\SectionRepository")
  */
-class Section
+class EventSection
 {
     /**
      * @var int
@@ -32,9 +32,9 @@ class Section
     private $title;
 
     /**
-     * @var Section
+     * @var EventSection
      * @Serializer\Exclude()
-     * @ORM\ManyToOne(targetEntity="Section")
+     * @ORM\ManyToOne(targetEntity="EventSection")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parentSection", referencedColumnName="id",onDelete="CASCADE")
      * })
@@ -63,7 +63,7 @@ class Section
      *
      * @param string $title
      *
-     * @return Section
+     * @return EventSection
      */
     public function setTitle($title)
     {
@@ -86,10 +86,10 @@ class Section
     /**
      * Set parentSection
      *
-     * @param Section $parentSection
-     * @return Section
+     * @param EventSection $parentSection
+     * @return EventSection
      */
-    public function setParentSection(Section $parentSection = null)
+    public function setParentSection(EventSection $parentSection = null)
     {
         $this->parentSection = $parentSection;
 
@@ -99,7 +99,7 @@ class Section
     /**
      * Get parentSection
      *
-     * @return Section
+     * @return EventSection
      */
     public function getParentSection()
     {
@@ -120,7 +120,7 @@ class Section
      * Set position
      *
      * @param integer $position
-     * @return Section
+     * @return EventSection
      */
     public function setPosition($position)
     {
@@ -154,7 +154,7 @@ class Section
         }
     }
 
-    private function checkSectionStrict(Section $section,$max_insert_count=20)
+    private function checkSectionStrict(EventSection $section,$max_insert_count=20)
     {
         $max_insert_count--;
         if(!$section->getParentSection())

@@ -14,12 +14,21 @@ security:
             - ROLE_NEWS_ARTICLE_CREATE
             - ROLE_NEWS_ARTICLE_UPDATE
             - ROLE_NEWS_ARTICLE_DELETE
+        #g
         ROLE_NEWS_CRUD:
             - ROLE_NEWS_SECTION_CRUD
             - ROLE_NEWS_ARTICLE_CRUD
         # -- news section
 
         # university
+        ROLE_UNI_ARTICLE_CRUD:
+            - ROLE_UNI_ARTICLE_CREATE
+            - ROLE_UNI_ARTICLE_UPDATE
+            - ROLE_UNI_ARTICLE_DELETE
+        ROLE_UNI_BOOK_CRUD:
+            - ROLE_UNI_BOOK_CREATE
+            - ROLE_UNI_BOOK_UPDATE
+            - ROLE_UNI_BOOK_DELETE
         ROLE_UNI_EVENT_CRUD:
             - ROLE_UNI_EVENT_CREATE
             - ROLE_UNI_EVENT_UPDATE
@@ -28,9 +37,12 @@ security:
             - ROLE_UNI_SECTION_CREATE
             - ROLE_UNI_SECTION_UPDATE
             - ROLE_UNI_SECTION_DELETE
+        #g
         ROLE_UNI_CRUD:
             - ROLE_UNI_EVENT_CRUD
             - ROLE_UNI_SECTION_CRUD
+            - ROLE_UNI_ARTICLE_CRUD
+            - ROLE_UNI_BOOK_CRUD
         # -- university
 
         # comments
@@ -39,11 +51,12 @@ security:
             - ROLE_COMMENTS_UPDATE
             - ROLE_COMMENTS_DELETE
         # -- comments
-
+        ROLE_EXPERT:
         ROLE_USER:
             - ROLE_COMMENTS_CRUD
         ROLE_ADMIN:
             - ROLE_USER
+            - ROLE_EXPERT
             - ROLE_NEWS_CRUD
             - ROLE_UNI_CRUD
         ROLE_SUPER_ADMIN:

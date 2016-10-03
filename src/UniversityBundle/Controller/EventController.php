@@ -6,7 +6,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use UniversityBundle\Form\Type\EventType;
 use UniversityBundle\Form\Type\EventPictureType;
-use UniversityBundle\Entity\Section;
+use UniversityBundle\Entity\EventSection;
 use UniversityBundle\Entity\Event;
 use ApiErrorBundle\Entity\Error;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ class EventController extends ApiController
         $Event = $form->getData();
         $Event->setUser($this->get('security.context')->getToken()->getUser());
 
-        $Event->setSections($this->checkSectionArray($Event->getSections(),'UniversityBundle:Section'));
+        $Event->setSections($this->checkSectionArray($Event->getSections(),'UniversityBundle:EventSection'));
 
         $errors = $this->get('validator')->validate($Event);
         if (count($errors) > 0)
@@ -87,7 +87,7 @@ class EventController extends ApiController
         $form = $this->createForm(new EventType(),$event,array('method' => 'PUT'))
             ->handleRequest($request);
         $event = $form->getData();
-        $event->setSections($this->checkSectionArray($event->getSections(),'UniversityBundle:Section'));
+        $event->setSections($this->checkSectionArray($event->getSections(),'UniversityBundle:EventSection'));
         $errors = $this->get('validator')->validate($event);
         if (count($errors) > 0)
             return $this->view(['error'=>$errors],Error::FORM_ERROR_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');

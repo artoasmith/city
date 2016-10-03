@@ -83,6 +83,9 @@ class DefaultController extends Controller
             ],
             File::FILE_TYPE => [
 
+            ],
+            File::PDF_TYPE => [
+
             ]
         ];
 
