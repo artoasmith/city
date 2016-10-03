@@ -186,10 +186,10 @@ class DefaultController extends FOSRestController
      * )
      * @Annotations\Get("/api/comments");
      *
-     * @Annotations\QueryParam(name="page",  requirements="\d+", description="Page")
-     * @Annotations\QueryParam(name="parentComment",  requirements="\d+", description="Parent comment id")
-     * @Annotations\QueryParam(name="_lastElement",  requirements="\d+", description="Last element")
-     * @Annotations\QueryParam(name="_limit", requirements="\d+")
+     * @Annotations\QueryParam(name="page",  requirements="\d+", description="Page", default=null)
+     * @Annotations\QueryParam(name="parentComment",  requirements="\d+", description="Parent comment id", default=null)
+     * @Annotations\QueryParam(name="_lastElement",  requirements="\d+", description="Last element", default=null)
+     * @Annotations\QueryParam(name="_limit", requirements="\d+", description="Limit elements", default=null)
      */
     public function getCommentsTree(Request $request)
     {

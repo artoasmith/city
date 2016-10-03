@@ -67,7 +67,7 @@ class DefaultController extends FOSRestController
         return $this->handleView($view);
     }
 
-    public function matching($key='', $repository='', array $fields = array(), $code=200)
+    public function matching($key='', $repository='', array $fields = array(), $requestSpecParams=[])
     {
         /**
          * @var EntityRepository $repo
@@ -113,50 +113,56 @@ class DefaultController extends FOSRestController
         $params = [' 1'];
         $tableAlt = $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->table['name'];
         $tableAlt = "`$tableAlt`";
-        if(isset($fields[$key])){
-            $filterFields = $fields[$key];
-            foreach ($fieldSet as $field){
-                if(isset($filterFields[$field['fieldName']])){
-                    $val = false;
-                    if(!is_array($filterFields[$field['fieldName']]))
-                        $filterFields[$field['fieldName']] = [$filterFields[$field['fieldName']]];
-                    //build query param
-                    switch ($field['type']){
-                        case 2: // entity type from associationMappings
-                        case 'integer':
-                            //is null check
-                            if(
-                                (count($filterFields[$field['fieldName']])==1 && empty($filterFields[$field['fieldName']][0]))
-                                ||
-                                in_array($filterFields[$field['fieldName']][0],['null','Null','NULL'])
-                            ){
-                                $val = sprintf(' %s.%s IS NULL',$tableAlt,$field['fieldName']);
-                                break;
-                            }
-                            $val = array_map($arrayCallBack['integer'],$filterFields[$field['fieldName']]);
-                            $val = array_unique($val);
-                            $val = sprintf(' %s.%s IN (%s)',$tableAlt,$field['fieldName'],implode(', ',$val));
-                            break;
-                        case 'array':
-                        case 'text':
-                        case 'datetime':
-                        case 'string':
-                            $val = array_map($arrayCallBack[$field['type']],$filterFields[$field['fieldName']]);
-                            $val = array_filter($val);
-                            $val = array_unique($val);
-                            foreach ($val as $key=>$elem){
-                                $val[$key] = " {$tableAlt}.`{$field['fieldName']}` LIKE '%{$elem}%'";
-                            }
-                            if($val)
-                                $val = sprintf(" (%s)",implode(' OR',$val));
-                            break;
-                    }
+        $filterFields = (isset($fields[$key])?$fields[$key]:[]);
 
-                    if($val)
-                        $params[] = $val;
+        foreach ($fieldSet as $field){
+
+            if(isset($requestSpecParams[$field['fieldName']])){
+
+                $params[] = sprintf(' %s.`%s` %s',$tableAlt,$field['fieldName'],$requestSpecParams[$field['fieldName']]);
+            }
+
+            if(isset($filterFields[$field['fieldName']])){
+                $val = false;
+                if(!is_array($filterFields[$field['fieldName']]))
+                    $filterFields[$field['fieldName']] = [$filterFields[$field['fieldName']]];
+                //build query param
+                switch ($field['type']){
+                    case 2: // entity type from associationMappings
+                    case 'integer':
+                        //is null check
+                        if(
+                            (count($filterFields[$field['fieldName']])==1 && empty($filterFields[$field['fieldName']][0]))
+                            ||
+                            in_array($filterFields[$field['fieldName']][0],['null','Null','NULL'])
+                        ){
+                            $val = sprintf(' %s.%s IS NULL',$tableAlt,$field['fieldName']);
+                            break;
+                        }
+                        $val = array_map($arrayCallBack['integer'],$filterFields[$field['fieldName']]);
+                        $val = array_unique($val);
+                        $val = sprintf(' %s.%s IN (%s)',$tableAlt,$field['fieldName'],implode(', ',$val));
+                        break;
+                    case 'array':
+                    case 'text':
+                    case 'datetime':
+                    case 'string':
+                        $val = array_map($arrayCallBack[$field['type']],$filterFields[$field['fieldName']]);
+                        $val = array_filter($val);
+                        $val = array_unique($val);
+                        foreach ($val as $key=>$elem){
+                            $val[$key] = " {$tableAlt}.`{$field['fieldName']}` LIKE '%{$elem}%'";
+                        }
+                        if($val)
+                            $val = sprintf(" (%s)",implode(' OR',$val));
+                        break;
                 }
+
+                if($val)
+                    $params[] = $val;
             }
         }
+
 
         $sort = [];
         if(isset($fields['_sort']) && is_array($fields['_sort'])){

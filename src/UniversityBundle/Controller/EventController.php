@@ -137,6 +137,7 @@ class EventController extends ApiController
      * )
      * @Annotations\Get("/api/uni_events");
      * @Annotations\QueryParam(name="event[id]", description="element object")
+     * @Annotations\QueryParam(name="event[archive]", description="elements in archive")
      * @Annotations\QueryParam(name="event[title]", description="element title")
      * @Annotations\QueryParam(name="event[date]", description="element date")
      * @Annotations\QueryParam(name="event[tags]", description="element tags")
@@ -151,7 +152,14 @@ class EventController extends ApiController
     public function getEventList(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view(['uni_events'=>$this->matching('event','UniversityBundle:Event', $arr)],Error::SUCCESS_GET_CODE)
+        $specParams = [
+            'date' => sprintf(
+                "%s '%s'",
+                (isset($arr['event']['archive']) && $arr['event']['archive'] && !in_array($arr['event']['archive'],['null','Null','NULL'])?'<':'>='),
+                date('Y-m-d H:i:s')
+            )
+        ];
+        return $this->view(['uni_events'=>$this->matching('event','UniversityBundle:Event', $arr,$specParams)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 

@@ -84,8 +84,8 @@ class Event
     private $duration;
 
     /**
-     * @var array
-     *
+     * @var string
+     * @Serializer\Exclude()
      * @ORM\Column(name="status", type="string", length=255, nullable=true)
      */
     private $status;
