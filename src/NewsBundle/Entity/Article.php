@@ -329,7 +329,6 @@ class Article
     public function setUser(\UserBundle\Entity\User $user = null)
     {
         $this->user = $user;
-
         return $this;
     }
 

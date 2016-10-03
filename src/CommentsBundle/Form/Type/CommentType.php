@@ -20,6 +20,7 @@ class CommentType extends BaseAbstractType
             ->add('text','text')
 
             ->add('newsArticle','entity',['class' => 'NewsBundle:Article', 'empty_data' => null])
+            ->add('uniEvent','entity',['class' => 'UniversityBundle:Event', 'empty_data' => null])
         ;
     }
 

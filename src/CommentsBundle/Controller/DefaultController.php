@@ -23,6 +23,17 @@ use ApiBundle\ApiBundle;
 class DefaultController extends FOSRestController
 {
     /**
+     * @param $manager
+     * @return Page
+     */
+    public function createPage(&$manager){
+        $page = new Page();
+        $page->setDate(new \DateTime());
+        $manager->persist($page);
+        return $page;
+    }
+
+    /**
      * @ApiDoc(
      *  section="Comments",
      *  resource=true,
@@ -45,11 +56,16 @@ class DefaultController extends FOSRestController
         if($data['newsArticle']){
             $page = $data['newsArticle']->getCommentPage();
             if(!$page){
-                $page = new Page();
-                $page->setDate(new \DateTime());
-                $manager->persist($page);
+                $page = $this->createPage($manager);
                 $data['newsArticle']->setCommentPage($page);
                 $manager->persist($data['newsArticle']);
+            }
+        }elseif ($data['uniEvent']){
+            $page = $data['uniEvent']->getCommentPage();
+            if(!$page){
+                $page = $this->createPage($manager);
+                $data['uniEvent']->setCommentPage($page);
+                $manager->persist($data['uniEvent']);
             }
         }
 
