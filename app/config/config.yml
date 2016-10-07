@@ -145,6 +145,6 @@ fos_oauth_server:
     refresh_token_class: UserBundle\Entity\RefreshToken
     auth_code_class:     UserBundle\Entity\AuthCode
     service:
-        user_provider: fos_user.user_manager             # This property will be used when valid credentials
+        user_provider: fos_user.user_provider.username            # This property will be used when valid credentials
 
 gregwar_image: ~

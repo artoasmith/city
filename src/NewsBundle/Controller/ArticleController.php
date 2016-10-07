@@ -86,7 +86,7 @@ class ArticleController extends ApiController
         if($pic = array_shift($files))
             $manager->persist($pic);
 
-        $article->setUser($this->get('security.context')->getToken()->getUser());
+        $article->setUser($this->getUser());
         $article->setPicture($pic);
         $manager->persist($article);
         $manager->flush();

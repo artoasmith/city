@@ -78,7 +78,7 @@ class DefaultController extends FOSRestController
                 ->setPage($page)
                 ->setParentComment($data['parentComment'])
                 ->setText($data['text'])
-                ->setUser($this->get('security.context')->getToken()->getUser());
+                ->setUser($this->getUser());
 
         $errors = $this->get('validator')->validate($comment);
         if (count($errors) > 0)
@@ -114,7 +114,7 @@ class DefaultController extends FOSRestController
          * @var Comment $comment
          * @var User $user
          */
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
 
         $comment = $this->getDoctrine()->getRepository('CommentsBundle:Comment')->find($id);
         if(!$comment)
@@ -153,7 +153,7 @@ class DefaultController extends FOSRestController
          * @var Comment $comment
          * @var User $user
          */
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
 
         $comment = $this->getDoctrine()->getRepository('CommentsBundle:Comment')->find($id);
         if(!$comment)

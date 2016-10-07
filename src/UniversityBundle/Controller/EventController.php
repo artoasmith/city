@@ -33,13 +33,13 @@ class EventController extends ApiController
      */
     public function postEvent(Request $request)
     {
-        $form = $this->createForm(new EventType(),new Event())
+        $form = $this->createForm(EventType::class,new Event())
                      ->handleRequest($request);
         /**
          * @var Event $Event
          */
         $Event = $form->getData();
-        $Event->setUser($this->get('security.context')->getToken()->getUser());
+        $Event->setUser($this->getUser());
 
         $Event->setSections($this->checkSectionArray($Event->getSections(),'UniversityBundle:EventSection'));
 
@@ -84,7 +84,7 @@ class EventController extends ApiController
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
 
-        $form = $this->createForm(new EventType(),$event,array('method' => 'PUT'))
+        $form = $this->createForm(EventType::class,$event,array('method' => 'PUT'))
             ->handleRequest($request);
         $event = $form->getData();
         $event->setSections($this->checkSectionArray($event->getSections(),'UniversityBundle:EventSection'));
@@ -227,7 +227,7 @@ class EventController extends ApiController
         if(!$Event)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        $form = $this->createForm(new EventPictureType(),$Event)
+        $form = $this->createForm(EventPictureType::class,$Event)
             ->handleRequest($request);
         $Event = $form->getData();
         if(!$Event->getPictureFile())

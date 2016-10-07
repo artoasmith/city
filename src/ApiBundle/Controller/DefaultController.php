@@ -39,7 +39,6 @@ class DefaultController extends FOSRestController
         /**
          * @var User $user
          */
-        $user = $this->get('security.context')->getToken()->getUser();
         $user = $this->getUser();
         $data = array("hello" => $user);
 

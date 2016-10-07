@@ -33,7 +33,7 @@ class ArticleController extends ApiController
      */
     public function postArticle(Request $request)
     {
-        $form = $this->createForm(new ArticleType(),new Article())
+        $form = $this->createForm(ArticleType::class,new Article())
             ->handleRequest($request);
         /**
          * @var Article $Article
@@ -88,7 +88,7 @@ class ArticleController extends ApiController
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
 
-        $form = $this->createForm(new ArticleType(),$Article,array('method' => 'PUT'))
+        $form = $this->createForm(ArticleType::class,$Article,array('method' => 'PUT'))
             ->handleRequest($request);
         $Article = $form->getData();
         $Article->setSections($this->checkSectionArray($Article->getSections(),'UniversityBundle:ArticleSection'));
@@ -221,7 +221,7 @@ class ArticleController extends ApiController
         if(!$article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        $form = $this->createForm(new ArticleFileType(),$article)
+        $form = $this->createForm(ArticleFileType::class,$article)
                      ->handleRequest($request);
         $article = $form->getData();
         if(!$article->getPictureFile())

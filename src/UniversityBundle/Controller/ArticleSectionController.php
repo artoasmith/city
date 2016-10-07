@@ -29,7 +29,7 @@ class ArticleSectionController extends DefaultSectionController
      */
     public function postSections(Request $request)
     {
-        return $this->postSectionElement($request, new ArticleSectionType, new ArticleSection());
+        return $this->postSectionElement($request, ArticleSectionType::class, new ArticleSection());
     }
 
     /**
@@ -44,7 +44,7 @@ class ArticleSectionController extends DefaultSectionController
      */
     public function putSections(Request $request,$id=0)
     {
-        return $this->putSectionElement($request,new ArticleSectionType(),$id,'UniversityBundle:ArticleSection');
+        return $this->putSectionElement($request, ArticleSectionType::class,$id,'UniversityBundle:ArticleSection');
     }
 
 

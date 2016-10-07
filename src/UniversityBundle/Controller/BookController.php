@@ -33,7 +33,7 @@ class BookController extends ApiController
      */
     public function postBook(Request $request)
     {
-        $form = $this->createForm(new BookType(),new Book())
+        $form = $this->createForm(BookType::class,new Book())
                      ->handleRequest($request);
         /**
          * @var Book $Book
@@ -104,7 +104,7 @@ class BookController extends ApiController
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
 
-        $form = $this->createForm(new BookType(),$book,array('method' => 'PUT'))
+        $form = $this->createForm(BookType::class,$book,array('method' => 'PUT'))
             ->handleRequest($request);
         $book = $form->getData();
         $book->setSections($this->checkSectionArray($book->getSections(),'UniversityBundle:BookSection'));
@@ -247,7 +247,7 @@ class BookController extends ApiController
         if(!$Book)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        $form = $this->createForm(new BookFileType(),$Book)
+        $form = $this->createForm(BookFileType::class,$Book)
                      ->handleRequest($request);
         $Book = $form->getData();
         if(!$Book->getPictureFile() && !$Book->getDocumentFile())

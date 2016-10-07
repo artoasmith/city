@@ -4,6 +4,9 @@ namespace UniversityBundle\Form\Type;
 
 use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 
 class BookFileType  extends BaseAbstractType
 {
@@ -12,13 +15,21 @@ class BookFileType  extends BaseAbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('pictureFile','file')
-            ->add('documentFile','file')
+            ->add('pictureFile',FileType::class)
+            ->add('documentFile',FileType::class)
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return self::name;
+    }
+
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'UniversityBundle\Entity\Book'
+        ));
     }
 }
