@@ -192,7 +192,7 @@ class ArticleController extends ApiController
          * @var Article $article
          */
         $article = $this->getDoctrine()->getRepository('UniversityBundle:Article')->find($id);
-        if(!$article || !$article->getPicture() || $article->getPicture()->getId() == $file_id)
+        if(!$article || !$article->getPicture() || $article->getPicture()->getId() != $file_id)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
         $manager = $this->getDoctrine()->getManager();

@@ -35,7 +35,7 @@ class DefaultController extends Controller
         }
 
         $res = [];
-        $folder = str_replace('//','/',sprintf('upload/%s/',$folder));
+        $folder = str_replace('//','/',sprintf('%s/../../../web/upload/%s/',__DIR__,$folder));
         foreach ($files as $file){
             $expansion = DefaultController::getExpansion($file->getMimeType());
 

@@ -40,6 +40,11 @@ class DefaultController extends FOSRestController
          * @var User $user
          */
         $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->getUser();
+        $data = array("hello" => $user);
+
+        $view = $this->view($data);
+        return $this->handleView($view);
 
         $files = $request->files->get('key');
         try{
@@ -61,7 +66,7 @@ class DefaultController extends FOSRestController
                           ->save(sprintf('%s/%d/%s',$file->getFolder(),$file->getId(),$file->getSourse()));
             $file->deleteFile();
         }
-        $data = array("hello" => $files);
+        $data = array("hello" => $user);
 
         $view = $this->view($data);
         return $this->handleView($view);

@@ -79,26 +79,27 @@ fos_rest:
 #    view:
 #        view_response_listener: true
     param_fetcher_listener: true
+    routing_loader:
+        default_format: json
     body_listener:
         array_normalizer: fos_rest.normalizer.camel_keys
     format_listener:
         enabled: true
         rules:
-            - { path: '^/', priorities: ['json','xml'], fallback_format: json, prefer_extension: false }
+            - { path: '^/', priorities: ['json'], fallback_format: json, prefer_extension: true }
 
     view:
         view_response_listener: 'force'
         formats:
-            xml: true
             json : true
+            xml: true
         templating_formats:
             html: true
         force_redirects:
             html: true
         failed_validation: HTTP_BAD_REQUEST
         default_engine: twig
-    routing_loader:
-        default_format: json
+
 
 jms_serializer:
     property_naming:

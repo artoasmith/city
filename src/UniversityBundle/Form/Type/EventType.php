@@ -25,7 +25,7 @@ class EventType extends BaseAbstractType
 
     public function getName()
     {
-        return 'event';
+        return 'uni_event';
     }
 
 }

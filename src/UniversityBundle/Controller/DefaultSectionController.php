@@ -37,7 +37,7 @@ class DefaultSectionController extends ApiController
         $manager->persist($object);
         $manager->flush();
 
-        return $this->view([$form::name=>$object],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([$form->getName()=>$object],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     public function putSectionElement($request,$form,$id,$repository){
@@ -58,7 +58,7 @@ class DefaultSectionController extends ApiController
         $manager->persist($section);
         $manager->flush();
 
-        return $this->view([$form::name=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([$form->getName()=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     public function deleteSectionElement($id,$repository,$key){

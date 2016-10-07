@@ -20,25 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Security\Core\SecurityContext;
 
 
-class DefaultController extends BaseController
+class DefaultController
 {
-    /**
-     * @GET("/t")
-     */
-    public function getAngularAction(Request $request)
-    {
-        return $this->view(['url'=>'http://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)
-                    ->setFormat('html')
-                    ->setTemplate('ApiBundle:Default:index.html.twig');
-    }
 
-    /**
-     * @GET("/user/{id}")
-     */
-    public function getTAngularAction(Request $request,$id=0)
-    {
-        return $this->view(['url'=>'http://'.$request->server->get('SERVER_NAME').$request->server->get('REQUEST_URI')],200)
-                    ->setFormat('html')
-                    ->setTemplate('UserBundle:Default:index.html.twig');
-    }
 }

@@ -4,7 +4,7 @@ namespace UniversityBundle\Form\Type;
 
 use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-
+use UniversityBundle\Entity\ArticleSection;
 
 class ArticleSectionType extends BaseAbstractType
 {

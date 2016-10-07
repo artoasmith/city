@@ -83,11 +83,11 @@ class ParseController
                 \curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
                 \curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
                 \curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-                \curl_setopt($curl, CURLOPT_CAINFO, getcwd() . '/ca.crt');
-                \curl_setopt($curl, CURLOPT_SSLCERT, getcwd() . '/cert.pem');
+                \curl_setopt($curl, CURLOPT_CAINFO, __DIR__ . '/ca.crt');
+                //\curl_setopt($curl, CURLOPT_SSLCERT, getcwd() . '/cert.pem');
                 \curl_setopt($curl, CURLOPT_SSLCERTPASSWD, "9932");
                 \curl_setopt($curl, CURLOPT_SSLCERTTYPE, "PEM");
-                \curl_setopt($curl, CURLOPT_SSLKEY, getcwd() . '/keys.pem');
+                \curl_setopt($curl, CURLOPT_SSLKEY, __DIR__ . '/keys.pem');
                 \curl_setopt($curl, CURLOPT_SSLKEYPASSWD, "9932");
                 $out = \curl_exec($curl);
                 if($out === false)
