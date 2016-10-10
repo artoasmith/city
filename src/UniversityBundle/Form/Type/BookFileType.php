@@ -6,11 +6,11 @@ use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-
-class BookFileType  extends BaseAbstractType
+class BookFileType  extends AbstractType
 {
-    const name = 'uni_book';
+    const name = 'uniBook';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

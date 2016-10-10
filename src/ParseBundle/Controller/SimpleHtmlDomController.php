@@ -103,6 +103,8 @@ class SimpleHtmlDomController
         // strip smarty scripts
         $this->remove_noise("'(\{\w)(.*?)(\})'s", true);
 
+        $this->remove_noise("'\s?<\s?p[^>]*>\s*(<\/span\s*>)[^<]*<\/p\s*>'s", false);
+
         // parsing
         while ($this->parse());
         // end

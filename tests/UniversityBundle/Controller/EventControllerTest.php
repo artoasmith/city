@@ -12,13 +12,13 @@ use ApiBundle\Tests\Controller\BaseControllerTest;
 
 class EventControllerTest extends BaseControllerTest
 {
-    const BASE_SECTION_ROUTE = 'uni_event_sections';
-    const BASE_SECTION_ELEMENT = 'uni_event_section';
-    const BASE_SECTION_ELEMENTS = 'uni_event_sections';
+    const BASE_SECTION_ROUTE = 'uniEventSections';
+    const BASE_SECTION_ELEMENT = 'uniEventSection';
+    const BASE_SECTION_ELEMENTS = 'uniEventSections';
 
-    const BASE_ELEMENT_ROUTE = 'uni_events';
-    const BASE_ELEMENT = 'uni_event';
-    const BASE_ELEMENTS= 'uni_events';
+    const BASE_ELEMENT_ROUTE = 'uniEvents';
+    const BASE_ELEMENT = 'uniEvent';
+    const BASE_ELEMENTS= 'uniEvents';
 
     public function testGlob(){
         $this->auth();

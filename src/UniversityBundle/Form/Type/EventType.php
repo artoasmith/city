@@ -11,8 +11,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-class EventType extends BaseAbstractType
+class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -32,7 +33,7 @@ class EventType extends BaseAbstractType
 
     public function getBlockPrefix()
     {
-        return 'uni_event';
+        return 'uniEvent';
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -6,8 +6,9 @@ use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-class EventPictureType extends BaseAbstractType
+class EventPictureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -18,7 +19,7 @@ class EventPictureType extends BaseAbstractType
 
     public function getBlockPrefix()
     {
-        return 'uni_event';
+        return 'uniEvent';
     }
 
 

@@ -6,10 +6,11 @@ use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-class ArticleFileType extends BaseAbstractType
+class ArticleFileType extends AbstractType
 {
-    const name = 'uni_article';
+    const name = 'uniArticle';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

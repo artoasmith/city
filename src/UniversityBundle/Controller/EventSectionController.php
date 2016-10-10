@@ -23,7 +23,7 @@ class EventSectionController extends DefaultSectionController
      *  description="Create event section",
      *  input="UniversityBundle\Form\Type\EventSectionType"
      * )
-     * @Annotations\Post("/api/uni_event_sections");
+     * @Annotations\Post("/api/uniEventSections");
      * @Security("is_granted('ROLE_UNI_SECTION_CREATE')")
      */
     public function postSections(Request $request)
@@ -38,7 +38,7 @@ class EventSectionController extends DefaultSectionController
      *  description="Update event section",
      *  input="UniversityBundle\Form\Type\EventSectionType"
      * )
-     * @Annotations\Put("/api/uni_event_sections/{id}");
+     * @Annotations\Put("/api/uniEventSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_UPDATE')")
      */
     public function putSections(Request $request,$id=0)
@@ -53,7 +53,7 @@ class EventSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Delete event section"
      * )
-     * @Annotations\Delete("/api/uni_event_sections/{id}");
+     * @Annotations\Delete("/api/uniEventSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_DELETE')")
      */
     public function deleteSections(Request $request,$id=0)
@@ -73,7 +73,7 @@ class EventSectionController extends DefaultSectionController
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
      *
-     * @Annotations\Get("/api/uni_event_sections")
+     * @Annotations\Get("/api/uniEventSections")
      */
     public function getSections(Request $request)
     {
@@ -88,7 +88,7 @@ class EventSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Get event section"
      * )
-     * @Annotations\Get("/api/uni_event_sections/{id}");
+     * @Annotations\Get("/api/uniEventSections/{id}");
      */
     public function getSectionElement(Request $request,$id=0)
     {

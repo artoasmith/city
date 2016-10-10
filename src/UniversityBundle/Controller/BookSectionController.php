@@ -23,7 +23,7 @@ class BookSectionController extends DefaultSectionController
      *  description="Create book section",
      *  input="UniversityBundle\Form\Type\BookSectionType"
      * )
-     * @Annotations\Post("/api/uni_book_sections");
+     * @Annotations\Post("/api/uniBookSections");
      * @Security("is_granted('ROLE_UNI_SECTION_CREATE')")
      */
     public function postSections(Request $request)
@@ -38,7 +38,7 @@ class BookSectionController extends DefaultSectionController
      *  description="Update book section",
      *  input="UniversityBundle\Form\Type\BookSectionType"
      * )
-     * @Annotations\Put("/api/uni_book_sections/{id}");
+     * @Annotations\Put("/api/uniBookSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_UPDATE')")
      */
     public function putSections(Request $request,$id=0)
@@ -53,7 +53,7 @@ class BookSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Delete book section"
      * )
-     * @Annotations\Delete("/api/uni_book_sections/{id}");
+     * @Annotations\Delete("/api/uniBookSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_DELETE')")
      */
     public function deleteSections(Request $request,$id=0)
@@ -73,7 +73,7 @@ class BookSectionController extends DefaultSectionController
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
      *
-     * @Annotations\Get("/api/uni_book_sections")
+     * @Annotations\Get("/api/uniBookSections")
      */
     public function getSections(Request $request)
     {
@@ -88,7 +88,7 @@ class BookSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Get article section"
      * )
-     * @Annotations\Get("/api/uni_book_sections/{id}");
+     * @Annotations\Get("/api/uniBookSections/{id}");
      */
     public function getSectionElement(Request $request,$id=0)
     {

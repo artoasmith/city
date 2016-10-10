@@ -28,7 +28,7 @@ class ArticleController extends ApiController
      *  description="Create article element",
      *  input="UniversityBundle\Form\Type\ArticleType"
      * )
-     * @Annotations\Post("/api/uni_articles");
+     * @Annotations\Post("/api/uniArticles");
      * @Security("is_granted('ROLE_UNI_ARTICLE_CREATE')")
      */
     public function postArticle(Request $request)
@@ -75,7 +75,7 @@ class ArticleController extends ApiController
      *  description="Update article element",
      *  input="UniversityBundle\Form\Type\ArticleType"
      * )
-     * @Annotations\Put("/api/uni_articles/{id}");
+     * @Annotations\Put("/api/uniArticles/{id}");
      * @Security("is_granted('ROLE_UNI_ARTICLE_UPDATE')")
      */
     public function putArticle(Request $request,$id=0)
@@ -109,7 +109,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Delete article element"
      * )
-     * @Annotations\Delete("/api/uni_articles/{id}");
+     * @Annotations\Delete("/api/uniArticles/{id}");
      * @Security("is_granted('ROLE_UNI_ARTICLE_DELETE')")
      */
     public function deleteArticle(Request $request,$id=0)
@@ -139,7 +139,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Get article elements"
      * )
-     * @Annotations\Get("/api/uni_articles");
+     * @Annotations\Get("/api/uniArticles");
      * @Annotations\QueryParam(name="article[id]", description="element object")
      * @Annotations\QueryParam(name="article[title]", description="element title")
      * @Annotations\QueryParam(name="article[date]", description="element title")
@@ -163,7 +163,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Get article element"
      * )
-     * @Annotations\Get("/api/uni_articles/{id}");
+     * @Annotations\Get("/api/uniArticles/{id}");
      */
     public function getArticle(Request $request,$id=0)
     {
@@ -183,7 +183,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Delete article's element picture"
      * )
-     * @Annotations\Delete("/api/uni_articles/{id}/files/{file_id}");
+     * @Annotations\Delete("/api/uniArticles/{id}/files/{file_id}");
      * @Security("is_granted('ROLE_UNI_ARTICLE_UPDATE')")
      */
     public function deleteArticlePicture(Request $request,$id=0,$file_id=0)
@@ -209,7 +209,7 @@ class ArticleController extends ApiController
      *  description="Update article element file",
      *  input="UniversityBundle\Form\Type\ArticleFileType"
      * )
-     * @Annotations\Post("/api/uni_articles/{id}/files");
+     * @Annotations\Post("/api/uniArticles/{id}/files");
      * @Security("is_granted('ROLE_UNI_EVENT_UPDATE')")
      */
     public function postEventsPicture(Request $request,$id=0)

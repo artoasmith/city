@@ -67,6 +67,20 @@ class DefaultController extends FOSRestController
                 $data['uniEvent']->setCommentPage($page);
                 $manager->persist($data['uniEvent']);
             }
+        }elseif ($data['uniArticle']){
+            $page = $data['uniArticle']->getCommentPage();
+            if(!$page){
+                $page = $this->createPage($manager);
+                $data['uniArticle']->setCommentPage($page);
+                $manager->persist($data['uniArticle']);
+            }
+        }elseif ($data['uniBook']){
+            $page = $data['uniBook']->getCommentPage();
+            if(!$page){
+                $page = $this->createPage($manager);
+                $data['uniBook']->setCommentPage($page);
+                $manager->persist($data['uniBook']);
+            }
         }
 
         if(!$page)

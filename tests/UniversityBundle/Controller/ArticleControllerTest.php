@@ -6,13 +6,13 @@ use ApiBundle\Tests\Controller\BaseControllerTest;
 
 class ArticleControllerTest extends BaseControllerTest
 {
-    const BASE_SECTION_ROUTE = 'uni_article_sections';
-    const BASE_SECTION_ELEMENT = 'uni_article_section';
-    const BASE_SECTION_ELEMENTS = 'uni_article_sections';
+    const BASE_SECTION_ROUTE = 'uniArticleSections';
+    const BASE_SECTION_ELEMENT = 'uniArticleSection';
+    const BASE_SECTION_ELEMENTS = 'uniArticleSections';
 
-    const BASE_ELEMENT_ROUTE = 'uni_articles';
-    const BASE_ELEMENT = 'uni_article';
-    const BASE_ELEMENTS= 'uni_articles';
+    const BASE_ELEMENT_ROUTE = 'uniArticles';
+    const BASE_ELEMENT = 'uniArticle';
+    const BASE_ELEMENTS= 'uniArticles';
 
     public function testGlob(){
         $this->auth();

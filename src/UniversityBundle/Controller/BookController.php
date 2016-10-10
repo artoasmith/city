@@ -28,7 +28,7 @@ class BookController extends ApiController
      *  description="Create book element",
      *  input="UniversityBundle\Form\Type\BookType"
      * )
-     * @Annotations\Post("/api/uni_books");
+     * @Annotations\Post("/api/uniBooks");
      * @Security("is_granted('ROLE_UNI_BOOK_CREATE')")
      */
     public function postBook(Request $request)
@@ -91,7 +91,7 @@ class BookController extends ApiController
      *  description="Update book element",
      *  input="UniversityBundle\Form\Type\BookType"
      * )
-     * @Annotations\Put("/api/uni_books/{id}");
+     * @Annotations\Put("/api/uniBooks/{id}");
      * @Security("is_granted('ROLE_UNI_BOOK_UPDATE')")
      */
     public function putBook(Request $request,$id=0)
@@ -125,7 +125,7 @@ class BookController extends ApiController
      *  resource=true,
      *  description="Delete book element"
      * )
-     * @Annotations\Delete("/api/uni_books/{id}");
+     * @Annotations\Delete("/api/uniBooks/{id}");
      * @Security("is_granted('ROLE_UNI_BOOK_DELETE')")
      */
     public function deleteBook(Request $request,$id=0)
@@ -155,7 +155,7 @@ class BookController extends ApiController
      *  resource=true,
      *  description="Get book elements"
      * )
-     * @Annotations\Get("/api/uni_books");
+     * @Annotations\Get("/api/uniBooks");
      * @Annotations\QueryParam(name="book[id]", description="element object")
      * @Annotations\QueryParam(name="book[title]", description="element title")
      * @Annotations\QueryParam(name="book[author]", description="element date")
@@ -179,7 +179,7 @@ class BookController extends ApiController
      *  resource=true,
      *  description="Get book element"
      * )
-     * @Annotations\Get("/api/uni_books/{id}");
+     * @Annotations\Get("/api/uniBooks/{id}");
      */
     public function getBooks(Request $request,$id=0)
     {
@@ -199,7 +199,7 @@ class BookController extends ApiController
      *  resource=true,
      *  description="Delete book's element picture"
      * )
-     * @Annotations\Delete("/api/uni_books/{id}/files/{file_id}");
+     * @Annotations\Delete("/api/uniBooks/{id}/files/{file_id}");
      * @Security("is_granted('ROLE_UNI_BOOK_UPDATE')")
      */
     public function deleteBooksPicture(Request $request,$id=0,$file_id=0)
@@ -235,7 +235,7 @@ class BookController extends ApiController
      *  description="Update book element file",
      *  input="UniversityBundle\Form\Type\EventPictureType"
      * )
-     * @Annotations\Post("/api/uni_books/{id}/files");
+     * @Annotations\Post("/api/uniBooks/{id}/files");
      * @Security("is_granted('ROLE_UNI_EVENT_UPDATE')")
      */
     public function postEventsPicture(Request $request,$id=0)

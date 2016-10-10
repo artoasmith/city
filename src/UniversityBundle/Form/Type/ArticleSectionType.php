@@ -5,14 +5,15 @@ namespace UniversityBundle\Form\Type;
 use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use UniversityBundle\Entity\ArticleSection;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ArticleSectionType extends BaseAbstractType
+class ArticleSectionType extends AbstractType
 {
-    const name = 'uni_article_section';
-    const names = 'uni_article_sections';
+    const name = 'uniArticleSection';
+    const names = 'uniArticleSections';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

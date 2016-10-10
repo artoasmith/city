@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-
-class BookSectionType extends BaseAbstractType
+class BookSectionType extends AbstractType
 {
-    const name = 'uni_book_section';
-    const names = 'uni_book_sections';
+    const name = 'uniBookSection';
+    const names = 'uniBookSections';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

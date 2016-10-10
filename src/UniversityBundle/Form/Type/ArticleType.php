@@ -10,12 +10,12 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-
-class ArticleType  extends BaseAbstractType
+class ArticleType  extends AbstractType
 {
-    const name = 'uni_article';
-    const names = 'uni_articles';
+    const name = 'uniArticle';
+    const names = 'uniArticles';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

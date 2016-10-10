@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class EventController extends ApiController
 {
+    const THIS_ELEMENT = 'uniEvent';
+    const THIS_ELEMENTS = 'uniEvents';
     /**
      * @ApiDoc(
      *  section="University",
@@ -28,7 +30,7 @@ class EventController extends ApiController
      *  description="Create event element",
      *  input="UniversityBundle\Form\Type\EventType"
      * )
-     * @Annotations\Post("/api/uni_events");
+     * @Annotations\Post("/api/uniEvents");
      * @Security("is_granted('ROLE_UNI_EVENT_CREATE')")
      */
     public function postEvent(Request $request)
@@ -61,7 +63,7 @@ class EventController extends ApiController
         $manager->persist($Event);
         $manager->flush();
 
-        return $this->view(['uni_event'=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -71,7 +73,7 @@ class EventController extends ApiController
      *  description="Update event element",
      *  input="UniversityBundle\Form\Type\EventType"
      * )
-     * @Annotations\Put("/api/uni_events/{id}");
+     * @Annotations\Put("/api/uniEvents/{id}");
      * @Security("is_granted('ROLE_UNI_EVENT_UPDATE')")
      */
     public function putEvent(Request $request,$id=0)
@@ -96,7 +98,7 @@ class EventController extends ApiController
         $manager->persist($event);
         $manager->flush();
 
-        return $this->view(['uni_event'=>$event],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -105,7 +107,7 @@ class EventController extends ApiController
      *  resource=true,
      *  description="Delete event element"
      * )
-     * @Annotations\Delete("/api/uni_events/{id}");
+     * @Annotations\Delete("/api/uniEvents/{id}");
      * @Security("is_granted('ROLE_UNI_EVENT_DELETE')")
      */
     public function deleteEvent(Request $request,$id=0)
@@ -126,7 +128,7 @@ class EventController extends ApiController
         $manager->remove($event);
         $manager->flush();
 
-        return $this->view(['uni_event'=>$event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -135,7 +137,7 @@ class EventController extends ApiController
      *  resource=true,
      *  description="Get event elements"
      * )
-     * @Annotations\Get("/api/uni_events");
+     * @Annotations\Get("/api/uniEvents");
      * @Annotations\QueryParam(name="event[id]", description="element object")
      * @Annotations\QueryParam(name="event[archive]", description="elements in archive")
      * @Annotations\QueryParam(name="event[title]", description="element title")
@@ -159,7 +161,7 @@ class EventController extends ApiController
                 date('Y-m-d H:i:s')
             )
         ];
-        return $this->view(['uni_events'=>$this->matching('event','UniversityBundle:Event', $arr,$specParams)],Error::SUCCESS_GET_CODE)
+        return $this->view([self::THIS_ELEMENTS=>$this->matching('event','UniversityBundle:Event', $arr,$specParams)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -169,7 +171,7 @@ class EventController extends ApiController
      *  resource=true,
      *  description="Get event element"
      * )
-     * @Annotations\Get("/api/uni_events/{id}");
+     * @Annotations\Get("/api/uniEvents/{id}");
      */
     public function getEvents(Request $request,$id=0)
     {
@@ -180,7 +182,7 @@ class EventController extends ApiController
         if(!$event)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view(['uni_event'=>$event],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -189,7 +191,7 @@ class EventController extends ApiController
      *  resource=true,
      *  description="Delete event element picture"
      * )
-     * @Annotations\Delete("/api/uni_events/{id}/files/{file_id}");
+     * @Annotations\Delete("/api/uniEvents/{id}/files/{file_id}");
      * @Security("is_granted('ROLE_UNI_EVENT_UPDATE')")
      */
     public function deleteEventsPicture(Request $request,$id=0,$file_id=0)
@@ -205,7 +207,7 @@ class EventController extends ApiController
         $manager->remove($Event->getPicture()->deleteFile());
         $manager->flush();
 
-        return $this->view(['uni_event'=>$Event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -215,7 +217,7 @@ class EventController extends ApiController
      *  description="Update event element picture",
      *  input="UniversityBundle\Form\Type\EventPictureType"
      * )
-     * @Annotations\Post("/api/uni_events/{id}/files");
+     * @Annotations\Post("/api/uniEvents/{id}/files");
      * @Security("is_granted('ROLE_UNI_EVENT_UPDATE')")
      */
     public function postEventsPicture(Request $request,$id=0)
@@ -253,6 +255,6 @@ class EventController extends ApiController
         $manager->persist($Event);
         $manager->flush();
 
-        return $this->view(['uni_event'=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

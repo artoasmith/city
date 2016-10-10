@@ -24,7 +24,7 @@ class ArticleSectionController extends DefaultSectionController
      *  description="Create article section",
      *  input="UniversityBundle\Form\Type\ArticleSectionType"
      * )
-     * @Annotations\Post("/api/uni_article_sections");
+     * @Annotations\Post("/api/uniArticleSections");
      * @Security("is_granted('ROLE_UNI_SECTION_CREATE')")
      */
     public function postSections(Request $request)
@@ -39,7 +39,7 @@ class ArticleSectionController extends DefaultSectionController
      *  description="Update article section",
      *  input="UniversityBundle\Form\Type\ArticleSectionType"
      * )
-     * @Annotations\Put("/api/uni_article_sections/{id}");
+     * @Annotations\Put("/api/uniArticleSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_UPDATE')")
      */
     public function putSections(Request $request,$id=0)
@@ -54,7 +54,7 @@ class ArticleSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Delete article section"
      * )
-     * @Annotations\Delete("/api/uni_article_sections/{id}");
+     * @Annotations\Delete("/api/uniArticleSections/{id}");
      * @Security("is_granted('ROLE_UNI_SECTION_DELETE')")
      */
     public function deleteSections(Request $request,$id=0)
@@ -74,7 +74,7 @@ class ArticleSectionController extends DefaultSectionController
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
      *
-     * @Annotations\Get("/api/uni_article_sections")
+     * @Annotations\Get("/api/uniArticleSections")
      */
     public function getSections(Request $request)
     {
@@ -89,7 +89,7 @@ class ArticleSectionController extends DefaultSectionController
      *  resource=true,
      *  description="Get article section"
      * )
-     * @Annotations\Get("/api/uni_article_sections/{id}");
+     * @Annotations\Get("/api/uniArticleSections/{id}");
      */
     public function getSectionElement(Request $request,$id=0)
     {

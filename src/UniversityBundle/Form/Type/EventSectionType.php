@@ -8,11 +8,12 @@ use UniversityBundle\Entity\ArticleSection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractType;
 
-class EventSectionType extends BaseAbstractType
+class EventSectionType extends AbstractType
 {
-    const name = 'uni_event_section';
-    const names = 'uni_event_sections';
+    const name = 'uniEventSection';
+    const names = 'uniEventSections';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

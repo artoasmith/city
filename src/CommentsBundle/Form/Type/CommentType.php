@@ -21,6 +21,8 @@ class CommentType extends BaseAbstractType
 
             ->add('newsArticle','entity',['class' => 'NewsBundle:Article', 'empty_data' => null])
             ->add('uniEvent','entity',['class' => 'UniversityBundle:Event', 'empty_data' => null])
+            ->add('uniArticle','entity',['class' => 'UniversityBundle:Article', 'empty_data' => null])
+            ->add('uniBook','entity',['class' => 'UniversityBundle:Book', 'empty_data' => null])
         ;
     }
 
