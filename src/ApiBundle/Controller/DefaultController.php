@@ -26,6 +26,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 use ApiErrorBundle\Entity\Error;
+use ApiBundle\Entity\Tag;
 
 class DefaultController extends FOSRestController
 {
@@ -155,7 +156,7 @@ class DefaultController extends FOSRestController
                         $val = array_filter($val);
                         $val = array_unique($val);
                         foreach ($val as $key=>$elem){
-                            $val[$key] = " {$tableAlt}.`{$field['fieldName']}` LIKE '%{$elem}%'";
+                            $val[$key] = " LOWER({$tableAlt}.`{$field['fieldName']}`) LIKE LOWER('%{$elem}%')";
                         }
                         if($val)
                             $val = sprintf(" (%s)",implode(' OR',$val));
@@ -224,5 +225,107 @@ class DefaultController extends FOSRestController
             $res = array_map(function($a){return $a->getId();},$section);
         }
         return $res;
+    }
+
+    public function tagsManipulator($action,$type,$tagsArray = []){
+        if(is_string($tagsArray))
+            $tagsArray = [$tagsArray];
+
+        if(!is_array($tagsArray) || empty($tagsArray))
+            return false;
+
+        $tagsArray = array_map(function($a){return str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],mb_strtolower($a));},$tagsArray);
+
+        switch($action){
+            case 'add':
+                $this->addTags($type,$tagsArray);
+                break;
+            case 'remove':
+                $this->removeTags($type,$tagsArray);
+                break;
+            default:
+                return false;
+        }
+    }
+
+    private function removeTags($entity,$tags){
+        $repo = $this->getDoctrine()->getRepository($entity);
+        if(!$repo)
+            return false;
+
+        $fields = $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->fieldMappings;
+        if(!isset($fields['tags']))
+            return false;
+
+        $tableAlt = $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->table['name'];
+        $tableAlt = "`$tableAlt`";
+        //stabilization value
+        $tags = array_values($tags);
+        $queryTags = array_map(function ($a){return "%\"$a\"%";},$tags);
+
+        //build query
+        $format = " SELECT count(1) as cnt FROM $tableAlt WHERE LOWER(tags) like '%s'";
+        $queryParams = array_map(function ($a) use ($format) {return sprintf($format,$a);},$queryTags);
+
+        $query = implode(' UNION',$queryParams);
+
+        $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()
+            ->prepare(
+                $query
+            );
+        $stmt->execute();
+        $ideas = $stmt->fetchAll();
+        //unset existing tags in model
+        if($ideas){
+            foreach ($ideas as $k=>$count){
+                if($count['cnt'] > 0){
+                    unset($tags[$k]);
+                }
+            }
+        }
+
+        if($tags){
+            $tags = $this->getDoctrine()->getRepository('ApiBundle:Tag')->findBy(['entity'=>$entity,'title'=>$tags]);
+            if($tags){
+                $manager = $this->getDoctrine()->getManager();
+                foreach ($tags as $tag){
+                    $manager->remove($tag);
+                }
+                $manager->flush();
+            }
+        }
+    }
+
+    private function addTags($entity,$tags){
+        $queryParam = array_map(function($a){return " t.title LIKE '$a'";},$tags);
+        $query = sprintf("SELECT t.title as tag FROM tag as t WHERE t.`entity` LIKE '%s' AND (%s) GROUP BY t.title",$entity,implode(' OR',$queryParam));
+
+        $stmt = $this->getDoctrine()->getManager()
+            ->getConnection()
+            ->prepare(
+                $query
+            );
+        $stmt->execute();
+        $ideas = $stmt->fetchAll();
+
+        if($ideas){
+            foreach ($ideas as $tag){
+                $key = array_search($tag['tag'],$tags);
+                if($key !== false)
+                    unset($tags[$key]);
+            }
+        }
+
+        if($tags){
+            $manager = $this->getDoctrine()->getManager();
+            foreach ($tags as $tag){
+                $tagElement = new Tag();
+                $tagElement->setEntity($entity)
+                           ->setTitle($tag);
+                $manager->persist($tagElement);
+            }
+            $manager->flush();
+        }
     }
 }

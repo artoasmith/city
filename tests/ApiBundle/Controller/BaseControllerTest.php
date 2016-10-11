@@ -50,7 +50,8 @@ class BaseControllerTest extends WebTestCase
                 'HTTP_Authorization'=>$this->access_token
             ]
         );
-
+        if($client->getResponse()->getStatusCode() == 500)
+            $this->assertEquals('d',$client->getResponse()->getContent());
         $this->assertEquals(204,$client->getResponse()->getStatusCode());
     }
 

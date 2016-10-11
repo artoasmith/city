@@ -81,6 +81,9 @@ class BookController extends ApiController
         $manager->persist($Book);
         $manager->flush();
 
+        if($Book->getTags())
+            $this->tagsManipulator('add','UniversityBundle:Book',$Book->getTags());
+
         return $this->view([BookType::name=>$Book],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -103,7 +106,7 @@ class BookController extends ApiController
         if(!$book)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-
+        $oldTags = $book->getTags();
         $form = $this->createForm(BookType::class,$book,array('method' => 'PUT'))
             ->handleRequest($request);
         $book = $form->getData();
@@ -115,6 +118,14 @@ class BookController extends ApiController
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($book);
         $manager->flush();
+
+        $needRem = array_diff($oldTags,$book->getTags());
+        if($needRem)
+            $this->tagsManipulator('remove','UniversityBundle:Book',$needRem);
+
+        $needAdd = array_diff($book->getTags(),$oldTags);
+        if($needAdd)
+            $this->tagsManipulator('add','UniversityBundle:Book',$needAdd);
 
         return $this->view([BookType::name=>$book],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
@@ -145,7 +156,7 @@ class BookController extends ApiController
 
         $manager->remove($book);
         $manager->flush();
-
+        $this->tagsManipulator('remove','UniversityBundle:Book',$book->getTags());
         return $this->view([BookType::name=>$book],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 

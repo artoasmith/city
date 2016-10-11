@@ -32,36 +32,36 @@ class BookControllerTest extends BaseControllerTest
                 'HTTP_Authorization'=>$this->access_token
             ]
         );
-        /*
-                $resp = json_decode($client->getResponse()->getContent(),true);
-                $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
 
-                $articleSection = $resp[self::BASE_SECTION_ELEMENT];
+        $resp = json_decode($client->getResponse()->getContent(),true);
+        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
 
-                $client->request(
-                    'PUT',
-                    sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),
-                    [
-                        self::BASE_SECTION_ELEMENT=>[
-                            'title'=>'test 22'
-                        ]
-                    ],
-                    [],
-                    [
-                        'HTTP_Authorization'=>$this->access_token
-                    ]
-                );
+        $articleSection = $resp[self::BASE_SECTION_ELEMENT];
 
-                $resp = json_decode($client->getResponse()->getContent(),true);
-                $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
+        $client->request(
+            'PUT',
+            sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),
+            [
+                self::BASE_SECTION_ELEMENT=>[
+                    'title'=>'test 22'
+                ]
+            ],
+            [],
+            [
+                'HTTP_Authorization'=>$this->access_token
+            ]
+        );
 
-                $this->getElements(sprintf("/api/%s",self::BASE_SECTION_ROUTE),[self::BASE_SECTION_ELEMENTS]);
-                $this->getElements(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),[self::BASE_SECTION_ELEMENT]);
+        $resp = json_decode($client->getResponse()->getContent(),true);
+        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
 
-                //articleTest
-                $this->elementCrudTest($articleSection);
+        $this->getElements(sprintf("/api/%s",self::BASE_SECTION_ROUTE),[self::BASE_SECTION_ELEMENTS]);
+        $this->getElements(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),[self::BASE_SECTION_ELEMENT]);
 
-                $this->deleteElement(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']));*/
+        //articleTest
+        $this->elementCrudTest($articleSection);
+
+        $this->deleteElement(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']));
     }
 
     public function elementCrudTest($sect){

@@ -52,6 +52,7 @@ security:
             - ROLE_COMMENTS_DELETE
         # -- comments
         ROLE_EXPERT:
+
         ROLE_USER:
             - ROLE_COMMENTS_CRUD
         ROLE_ADMIN:

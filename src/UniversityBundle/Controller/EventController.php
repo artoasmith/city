@@ -63,6 +63,9 @@ class EventController extends ApiController
         $manager->persist($Event);
         $manager->flush();
 
+        if($Event->getTags()){
+            $this->tagsManipulator('add','UniversityBundle:Event',$Event->getTags());
+        }
         return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -85,7 +88,7 @@ class EventController extends ApiController
         if(!$event)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-
+        $oldTags = $event->getTags();
         $form = $this->createForm(EventType::class,$event,array('method' => 'PUT'))
             ->handleRequest($request);
         $event = $form->getData();
@@ -97,6 +100,14 @@ class EventController extends ApiController
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($event);
         $manager->flush();
+
+        $needRem = array_diff($oldTags,$event->getTags());
+        if($needRem)
+            $this->tagsManipulator('remove','UniversityBundle:Event',$needRem);
+
+        $needAdd = array_diff($event->getTags(),$oldTags);
+        if($needAdd)
+            $this->tagsManipulator('add','UniversityBundle:Event',$needAdd);
 
         return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
@@ -127,6 +138,8 @@ class EventController extends ApiController
 
         $manager->remove($event);
         $manager->flush();
+
+        $this->tagsManipulator('remove','UniversityBundle:Event',$event->getTags());
 
         return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }

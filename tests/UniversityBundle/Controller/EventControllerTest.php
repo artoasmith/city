@@ -112,7 +112,7 @@ class EventControllerTest extends BaseControllerTest
                     'description'=>'text',
                     'date'=> date('Y-m-d H:i',time()+1000),
                     'duration'=>123,
-                    'tags'=>['type','text'],
+                    'tags'=>['type2','text'],
                     'sections'=>[
                         $sect['id']
                     ]
