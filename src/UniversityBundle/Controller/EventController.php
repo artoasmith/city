@@ -21,8 +21,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class EventController extends ApiController
 {
-    const THIS_ELEMENT = 'uniEvent';
-    const THIS_ELEMENTS = 'uniEvents';
+    const DEF_ROUTE = 'uniEvents';
+
     /**
      * @ApiDoc(
      *  section="University",
@@ -66,7 +66,7 @@ class EventController extends ApiController
         if($Event->getTags()){
             $this->tagsManipulator('add','UniversityBundle:Event',$Event->getTags());
         }
-        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -109,7 +109,7 @@ class EventController extends ApiController
         if($needAdd)
             $this->tagsManipulator('add','UniversityBundle:Event',$needAdd);
 
-        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$event],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -141,7 +141,7 @@ class EventController extends ApiController
 
         $this->tagsManipulator('remove','UniversityBundle:Event',$event->getTags());
 
-        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -174,7 +174,7 @@ class EventController extends ApiController
                 date('Y-m-d H:i:s')
             )
         ];
-        return $this->view([self::THIS_ELEMENTS=>$this->matching('event','UniversityBundle:Event', $arr,$specParams)],Error::SUCCESS_GET_CODE)
+        return $this->view([Event::MANY=>$this->matching('event','UniversityBundle:Event', $arr,$specParams)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -195,7 +195,7 @@ class EventController extends ApiController
         if(!$event)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([self::THIS_ELEMENT=>$event],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$event],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -220,7 +220,7 @@ class EventController extends ApiController
         $manager->remove($Event->getPicture()->deleteFile());
         $manager->flush();
 
-        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$Event],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -268,6 +268,6 @@ class EventController extends ApiController
         $manager->persist($Event);
         $manager->flush();
 
-        return $this->view([self::THIS_ELEMENT=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Event::ONE=>$Event],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

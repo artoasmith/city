@@ -9,6 +9,12 @@
 namespace UniversityBundle\Tests\Controller;
 
 use ApiBundle\Tests\Controller\BaseControllerTest;
+use UniversityBundle\Controller\EventController;
+use UniversityBundle\Controller\EventSectionController;
+use UniversityBundle\Form\Type\EventType;
+use UniversityBundle\Form\Type\EventSectionType;
+use UniversityBundle\Entity\Event;
+use UniversityBundle\Entity\EventSection;
 
 class EventControllerTest extends BaseControllerTest
 {
@@ -27,9 +33,9 @@ class EventControllerTest extends BaseControllerTest
 
         $client->request(
             'POST',
-            "/api/".self::BASE_SECTION_ROUTE,
+            "/api/".EventSectionController::DEF_ROUTE,
             [
-                self::BASE_SECTION_ELEMENT=>[
+                EventSectionType::NAME=>[
                     'title'=>'test'
                 ]
             ],
@@ -40,15 +46,15 @@ class EventControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
+        $this->assertEquals([EventSection::ONE],array_keys($resp));
 
-        $articleSection = $resp[self::BASE_SECTION_ELEMENT];
+        $articleSection = $resp[EventSection::ONE];
 
         $client->request(
             'PUT',
-            sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),
+            sprintf("/api/%s/%d",EventSectionController::DEF_ROUTE,$articleSection['id']),
             [
-                self::BASE_SECTION_ELEMENT=>[
+                EventSectionType::NAME=>[
                     'title'=>'test 22'
                 ]
             ],
@@ -59,15 +65,15 @@ class EventControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
+        $this->assertEquals([EventSection::ONE],array_keys($resp));
 
-        $this->getElements(sprintf("/api/%s",self::BASE_SECTION_ROUTE),[self::BASE_SECTION_ELEMENTS]);
-        $this->getElements(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),[self::BASE_SECTION_ELEMENT]);
+        $this->getElements(sprintf("/api/%s",EventSectionController::DEF_ROUTE),[EventSection::MANY]);
+        $this->getElements(sprintf("/api/%s/%d",EventSectionController::DEF_ROUTE,$articleSection['id']),[EventSection::ONE]);
 
         //articleTest
         $this->elementCrudTest($articleSection);
 
-        $this->deleteElement(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']));
+        $this->deleteElement(sprintf("/api/%s/%d",EventSectionController::DEF_ROUTE,$articleSection['id']));
     }
 
     public function elementCrudTest($sect){
@@ -75,9 +81,9 @@ class EventControllerTest extends BaseControllerTest
 
         $client->request(
             'POST',
-            "/api/".self::BASE_ELEMENT_ROUTE,
+            "/api/".EventController::DEF_ROUTE,
             [
-                self::BASE_ELEMENT=>[
+                EventType::NAME=>[
                     'title'=>'text',
                     'description'=>'text',
                     'date'=> date('Y-m-d H:i',time()+1000),
@@ -89,7 +95,7 @@ class EventControllerTest extends BaseControllerTest
                 ]
             ],
             [
-                self::BASE_ELEMENT=>[
+                EventType::NAME=>[
                     'pictureFile'=>$this->getFile('pic')
                 ]
             ],
@@ -99,15 +105,15 @@ class EventControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Event::ONE],array_keys($resp));
 
-        $element = $resp[self::BASE_ELEMENT];
+        $element = $resp[Event::ONE];
 
         $client->request(
             'PUT',
-            sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']),
+            sprintf("/api/%s/%d",EventController::DEF_ROUTE,$element['id']),
             [
-                self::BASE_ELEMENT=>[
+                EventType::NAME=>[
                     'title'=>'text',
                     'description'=>'text',
                     'date'=> date('Y-m-d H:i',time()+1000),
@@ -125,20 +131,20 @@ class EventControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Event::ONE],array_keys($resp));
 
-        $this->getElements(sprintf("/api/%s",self::BASE_ELEMENT_ROUTE),[self::BASE_ELEMENTS]);
-        $this->getElements(sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']),[self::BASE_ELEMENT]);
+        $this->getElements(sprintf("/api/%s",EventController::DEF_ROUTE),[Event::MANY]);
+        $this->getElements(sprintf("/api/%s/%d",EventController::DEF_ROUTE,$element['id']),[Event::ONE]);
 
         //file manipulation
-        $this->deleteElement(sprintf('/api/%s/%d/files/%d',self::BASE_ELEMENT_ROUTE,$element['id'],$element['picture']));
+        $this->deleteElement(sprintf('/api/%s/%d/files/%d',EventController::DEF_ROUTE,$element['id'],$element['picture']));
 
         $client->request(
             'POST',
-            sprintf("/api/%s/%d/files",self::BASE_ELEMENT_ROUTE,$element['id']),
+            sprintf("/api/%s/%d/files",EventController::DEF_ROUTE,$element['id']),
             [],
             [
-                self::BASE_ELEMENT=>[
+                EventType::NAME=>[
                     'pictureFile'=>$this->getFile('pic')
                 ]
             ],
@@ -148,8 +154,8 @@ class EventControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Event::ONE],array_keys($resp));
 
-        $this->deleteElement(sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']));
+        $this->deleteElement(sprintf("/api/%s/%d",EventController::DEF_ROUTE,$element['id']));
     }
 }

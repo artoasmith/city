@@ -16,6 +16,8 @@ use ApiBundle\Controller\DefaultController as ApiController;
 
 class EventSectionController extends DefaultSectionController
 {
+    const DEF_ROUTE = 'uniEventSections';
+
     /**
      * @ApiDoc(
      *  section="University",
@@ -58,7 +60,7 @@ class EventSectionController extends DefaultSectionController
      */
     public function deleteSections(Request $request,$id=0)
     {
-       return $this->deleteSectionElement($id,'UniversityBundle:EventSection',EventSectionType::name);
+       return $this->deleteSectionElement($id,'UniversityBundle:EventSection',EventSection::ONE);
     }
 
     /**
@@ -78,7 +80,7 @@ class EventSectionController extends DefaultSectionController
     public function getSections(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view([EventSectionType::names=>$this->matching('section','UniversityBundle:EventSection', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([EventSection::MANY=>$this->matching('section','UniversityBundle:EventSection', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -96,6 +98,6 @@ class EventSectionController extends DefaultSectionController
         if(!$Section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([EventSectionType::name=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([EventSection::ONE=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

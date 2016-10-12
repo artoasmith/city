@@ -12,8 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ArticleSectionType extends AbstractType
 {
-    const name = 'uniArticleSection';
-    const names = 'uniArticleSections';
+    const NAME = 'uniArticleSection';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -25,7 +24,7 @@ class ArticleSectionType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return self::name;
+        return self::NAME;
     }
 
     public function configureOptions(OptionsResolver $resolver)

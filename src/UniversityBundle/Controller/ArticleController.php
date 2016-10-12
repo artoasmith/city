@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ArticleController extends ApiController
 {
+    const DEF_ROUTE = 'uniArticles';
+
     /**
      * @ApiDoc(
      *  section="University",
@@ -65,7 +67,10 @@ class ArticleController extends ApiController
         $manager->persist($Article);
         $manager->flush();
 
-        return $this->view([ArticleType::name=>$Article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        if($Article->getTags()){
+            $this->tagsManipulator('add','UniversityBundle:Article',$Article->getTags());
+        }
+        return $this->view([Article::ONE=>$Article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -87,7 +92,7 @@ class ArticleController extends ApiController
         if(!$Article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-
+        $oldTags = $Article->getTags();
         $form = $this->createForm(ArticleType::class,$Article,array('method' => 'PUT'))
             ->handleRequest($request);
         $Article = $form->getData();
@@ -100,7 +105,15 @@ class ArticleController extends ApiController
         $manager->persist($Article);
         $manager->flush();
 
-        return $this->view([ArticleType::name=>$Article],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $needRem = array_diff($oldTags,$Article->getTags());
+        if($needRem)
+            $this->tagsManipulator('remove','UniversityBundle:Article',$needRem);
+
+        $needAdd = array_diff($Article->getTags(),$oldTags);
+        if($needAdd)
+            $this->tagsManipulator('add','UniversityBundle:Article',$needAdd);
+
+        return $this->view([Article::ONE=>$Article],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -129,8 +142,8 @@ class ArticleController extends ApiController
 
         $manager->remove($Article);
         $manager->flush();
-
-        return $this->view([ArticleType::name=>$Article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $this->tagsManipulator('remove','UniversityBundle:Article',$Article->getTags());
+        return $this->view([Article::ONE=>$Article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -153,7 +166,7 @@ class ArticleController extends ApiController
     public function getArticleList(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view([ArticleType::names=>$this->matching('article','UniversityBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([Article::MANY=>$this->matching('article','UniversityBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -174,7 +187,7 @@ class ArticleController extends ApiController
         if(!$article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([ArticleType::name=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -199,7 +212,7 @@ class ArticleController extends ApiController
         $manager->remove($article->getPicture()->deleteFile());
         $manager->flush();
 
-        return $this->view([ArticleType::name=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -251,6 +264,6 @@ class ArticleController extends ApiController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->view([ArticleType::name=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

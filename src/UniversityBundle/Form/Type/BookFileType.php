@@ -2,7 +2,6 @@
 
 namespace UniversityBundle\Form\Type;
 
-use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,7 +9,7 @@ use Symfony\Component\Form\AbstractType;
 
 class BookFileType  extends AbstractType
 {
-    const name = 'uniBook';
+    const NAME = BookType::NAME;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -22,7 +21,7 @@ class BookFileType  extends AbstractType
 
     public function getBlockPrefix()
     {
-        return self::name;
+        return self::NAME;
     }
 
 

@@ -4,27 +4,44 @@ namespace NewsBundle\Form\Type;
 
 use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use UniversityBundle\Entity\ArticleSection;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
-class ArticleType extends BaseAbstractType
+class ArticleType extends AbstractType
 {
+    const NAME = 'newsArticle';
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title','text')
-            ->add('pictureFile','file')
-            ->add('date','date',array(
+            ->add('title',HiddenType::class)
+            ->add('pictureFile',FileType::class)
+            ->add('date',DateType::class,array(
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm',
             ))
-            ->add('tags','collection',['type'=>'text','allow_add'=>true])
-            ->add('text','text')
-            ->add('sections','collection',['type'=>'integer','allow_add'=>true])
+            ->add('tags',CollectionType::class,['entry_type'=>HiddenType::class,'allow_add'=>true])
+            ->add('text',HiddenType::class)
+            ->add('sections',CollectionType::class,['entry_type'=>IntegerType::class,'allow_add'=>true])
         ;
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
-        return 'article';
+        return self::NAME;
     }
 
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'NewsBundle\Entity\Article'
+        ));
+    }
 }

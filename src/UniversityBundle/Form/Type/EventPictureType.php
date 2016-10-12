@@ -10,6 +10,8 @@ use Symfony\Component\Form\AbstractType;
 
 class EventPictureType extends AbstractType
 {
+    const NAME = EventType::NAME;
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -19,7 +21,7 @@ class EventPictureType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'uniEvent';
+        return self::NAME;
     }
 
 

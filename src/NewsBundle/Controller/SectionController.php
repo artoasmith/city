@@ -22,6 +22,8 @@ use ApiBundle\Controller\DefaultController as ApiController;
 
 class SectionController extends ApiController
 {
+    const DEF_ROUTE = 'newsSections';
+
     /**
      * @ApiDoc(
      *  section="News",
@@ -29,7 +31,7 @@ class SectionController extends ApiController
      *  description="Create article section",
      *  input="NewsBundle\Form\Type\SectionType"
      * )
-     * @Annotations\Post("/api/news_sections");
+     * @Annotations\Post("/api/newsSections");
      * @Security("is_granted('ROLE_NEWS_SECTION_CREATE')")
      */
     public function postSections(Request $request)
@@ -53,7 +55,7 @@ class SectionController extends ApiController
         $manager->persist($section);
         $manager->flush();
 
-        return $this->view(['section'=>$section],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Section::ONE=>$section],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -63,7 +65,7 @@ class SectionController extends ApiController
      *  description="Update article section",
      *  input="NewsBundle\Form\Type\SectionType"
      * )
-     * @Annotations\Put("/api/news_sections/{id}");
+     * @Annotations\Put("/api/newsSections/{id}");
      * @Security("is_granted('ROLE_NEWS_SECTION_UPDATE')")
      */
     public function putSections(Request $request,$id=0)
@@ -88,7 +90,7 @@ class SectionController extends ApiController
         $manager->persist($section);
         $manager->flush();
 
-        return $this->view(['section'=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Section::ONE=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
 
@@ -98,7 +100,7 @@ class SectionController extends ApiController
      *  resource=true,
      *  description="Delete article section"
      * )
-     * @Annotations\Delete("/api/news_sections/{id}");
+     * @Annotations\Delete("/api/newsSections/{id}");
      * @Security("is_granted('ROLE_NEWS_SECTION_DELETE')")
      */
     public function deleteSections(Request $request,$id=0)
@@ -114,7 +116,7 @@ class SectionController extends ApiController
         $manager->remove($section);
         $manager->flush();
 
-        return $this->view(['section'=>$section],Error::SUCCESS_DELETE_CODE)->setTemplate('NewsBundle:Default:section.html.twig');
+        return $this->view([Section::ONE=>$section],Error::SUCCESS_DELETE_CODE)->setTemplate('NewsBundle:Default:section.html.twig');
     }
 
     /**
@@ -129,12 +131,12 @@ class SectionController extends ApiController
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
      *
-     * @Annotations\Get("/api/news_sections")
+     * @Annotations\Get("/api/newsSections")
      */
     public function getSections(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view(['sections'=>$this->matching('section','NewsBundle:Section', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([Section::MANY=>$this->matching('section','NewsBundle:Section', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -144,7 +146,7 @@ class SectionController extends ApiController
      *  resource=true,
      *  description="Get article element"
      * )
-     * @Annotations\Get("/api/news_sections/{id}");
+     * @Annotations\Get("/api/newsSections/{id}");
      */
     public function getArticles(Request $request,$id=0)
     {
@@ -155,6 +157,6 @@ class SectionController extends ApiController
         if(!$Section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view(['section'=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Section::ONE=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

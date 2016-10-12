@@ -17,6 +17,8 @@ use ApiBundle\Controller\DefaultController as ApiController;
 
 class ArticleSectionController extends DefaultSectionController
 {
+    const DEF_ROUTE = 'uniArticleSections';
+
     /**
      * @ApiDoc(
      *  section="University",
@@ -59,7 +61,7 @@ class ArticleSectionController extends DefaultSectionController
      */
     public function deleteSections(Request $request,$id=0)
     {
-        return $this->deleteSectionElement($id,'UniversityBundle:ArticleSection',ArticleSectionType::name);
+        return $this->deleteSectionElement($id,'UniversityBundle:ArticleSection',ArticleSection::ONE);
     }
 
     /**
@@ -79,7 +81,7 @@ class ArticleSectionController extends DefaultSectionController
     public function getSections(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view([ArticleSectionType::names=>$this->matching('section','UniversityBundle:ArticleSection', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([ArticleSection::MANY=>$this->matching('section','UniversityBundle:ArticleSection', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -97,7 +99,7 @@ class ArticleSectionController extends DefaultSectionController
         if(!$Section)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([ArticleSectionType::name=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([ArticleSection::ONE=>$Section],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
 }

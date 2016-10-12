@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class BookController extends ApiController
 {
+    const DEF_ROUTE = 'uniBooks';
+
     /**
      * @ApiDoc(
      *  section="University",
@@ -84,7 +86,7 @@ class BookController extends ApiController
         if($Book->getTags())
             $this->tagsManipulator('add','UniversityBundle:Book',$Book->getTags());
 
-        return $this->view([BookType::name=>$Book],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$Book],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -127,7 +129,7 @@ class BookController extends ApiController
         if($needAdd)
             $this->tagsManipulator('add','UniversityBundle:Book',$needAdd);
 
-        return $this->view([BookType::name=>$book],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$book],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -157,7 +159,7 @@ class BookController extends ApiController
         $manager->remove($book);
         $manager->flush();
         $this->tagsManipulator('remove','UniversityBundle:Book',$book->getTags());
-        return $this->view([BookType::name=>$book],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$book],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -180,7 +182,7 @@ class BookController extends ApiController
     public function getBookList(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view([BookType::names=>$this->matching('book','UniversityBundle:Book', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([Book::MANY=>$this->matching('book','UniversityBundle:Book', $arr)],Error::SUCCESS_GET_CODE)
             ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -201,7 +203,7 @@ class BookController extends ApiController
         if(!$book)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([BookType::name=>$book],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$book],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -236,7 +238,7 @@ class BookController extends ApiController
         $manager->remove($file->deleteFile());
         $manager->flush();
 
-        return $this->view([BookType::name=>$Book],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$Book],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -309,6 +311,6 @@ class BookController extends ApiController
         $manager->persist($Book);
         $manager->flush();
 
-        return $this->view([BookType::name=>$Book],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Book::ONE=>$Book],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

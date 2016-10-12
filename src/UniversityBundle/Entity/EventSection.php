@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class EventSection
 {
+    const ONE = 'uniEventSection';
+    const MANY = 'uniEventSections';
+
     /**
      * @var int
      *

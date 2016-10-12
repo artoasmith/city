@@ -15,6 +15,8 @@ use Symfony\Component\Form\AbstractType;
 
 class EventType extends AbstractType
 {
+    const NAME = 'uniEvent';
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -33,7 +35,7 @@ class EventType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'uniEvent';
+        return self::NAME;
     }
 
     public function configureOptions(OptionsResolver $resolver)

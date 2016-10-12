@@ -19,6 +19,8 @@ use NewsBundle\NewsBundle;
 class Article
 {
     const DEF_PICTURE_FOLDER = 'images/uniArticle';
+    const ONE = 'uniArticle';
+    const MANY = 'uniArticles';
 
     /**
      * @var int

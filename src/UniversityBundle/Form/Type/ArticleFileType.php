@@ -10,8 +10,6 @@ use Symfony\Component\Form\AbstractType;
 
 class ArticleFileType extends AbstractType
 {
-    const name = 'uniArticle';
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -21,7 +19,7 @@ class ArticleFileType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return self::name;
+        return ArticleType::NAME;
     }
 
 

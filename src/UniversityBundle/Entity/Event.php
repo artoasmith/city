@@ -21,6 +21,8 @@ class Event
 {
     const ARCHIVE_STATUS = 'archive';
     const DEF_PICTURE_FOLDER = 'images/uniEvent';
+    const ONE = 'uniEvent';
+    const MANY = 'uniEvents';
 
     /**
      * @var int

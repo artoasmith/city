@@ -3,17 +3,15 @@
 namespace UniversityBundle\Tests\Controller;
 
 use ApiBundle\Tests\Controller\BaseControllerTest;
+use UniversityBundle\Controller\ArticleController;
+use UniversityBundle\Controller\ArticleSectionController;
+use UniversityBundle\Form\Type\ArticleType;
+use UniversityBundle\Form\Type\ArticleSectionType;
+use UniversityBundle\Entity\Article;
+use UniversityBundle\Entity\ArticleSection;
 
 class ArticleControllerTest extends BaseControllerTest
 {
-    const BASE_SECTION_ROUTE = 'uniArticleSections';
-    const BASE_SECTION_ELEMENT = 'uniArticleSection';
-    const BASE_SECTION_ELEMENTS = 'uniArticleSections';
-
-    const BASE_ELEMENT_ROUTE = 'uniArticles';
-    const BASE_ELEMENT = 'uniArticle';
-    const BASE_ELEMENTS= 'uniArticles';
-
     public function testGlob(){
         $this->auth();
 
@@ -21,9 +19,9 @@ class ArticleControllerTest extends BaseControllerTest
 
         $client->request(
             'POST',
-            "/api/".self::BASE_SECTION_ROUTE,
+            "/api/".ArticleSectionController::DEF_ROUTE,
             [
-                self::BASE_SECTION_ELEMENT=>[
+                ArticleSectionType::NAME=>[
                     'title'=>'test'
                 ]
             ],
@@ -34,15 +32,15 @@ class ArticleControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
+        $this->assertEquals([ArticleSection::ONE],array_keys($resp));
 
-        $articleSection = $resp[self::BASE_SECTION_ELEMENT];
+        $articleSection = $resp[ArticleSection::ONE];
 
         $client->request(
             'PUT',
-            sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),
+            sprintf("/api/%s/%d",ArticleSectionController::DEF_ROUTE,$articleSection['id']),
             [
-                self::BASE_SECTION_ELEMENT=>[
+                ArticleSectionType::NAME=>[
                     'title'=>'test 22'
                 ]
             ],
@@ -53,15 +51,15 @@ class ArticleControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_SECTION_ELEMENT],array_keys($resp));
+        $this->assertEquals([ArticleSection::ONE],array_keys($resp));
 
-        $this->getElements(sprintf("/api/%s",self::BASE_SECTION_ROUTE),[self::BASE_SECTION_ELEMENTS]);
-        $this->getElements(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']),[self::BASE_SECTION_ELEMENT]);
+        $this->getElements(sprintf("/api/%s",ArticleSectionController::DEF_ROUTE),[ArticleSection::MANY]);
+        $this->getElements(sprintf("/api/%s/%d",ArticleSectionController::DEF_ROUTE,$articleSection['id']),[ArticleSection::ONE]);
 
         //articleTest
         $this->elementCrudTest($articleSection);
 
-        $this->deleteElement(sprintf("/api/%s/%d",self::BASE_SECTION_ROUTE,$articleSection['id']));
+        $this->deleteElement(sprintf("/api/%s/%d",ArticleSectionController::DEF_ROUTE,$articleSection['id']));
     }
 
     public function elementCrudTest($sect){
@@ -69,9 +67,9 @@ class ArticleControllerTest extends BaseControllerTest
 
         $client->request(
             'POST',
-            "/api/".self::BASE_ELEMENT_ROUTE,
+            "/api/".ArticleController::DEF_ROUTE,
             [
-                self::BASE_ELEMENT=>[
+                ArticleType::NAME=>[
                     'author'=>'text',
                     'date'=> date('Y-m-d H:i',time()+1000),
                     'text'=>'text',
@@ -83,7 +81,7 @@ class ArticleControllerTest extends BaseControllerTest
                 ]
             ],
             [
-                self::BASE_ELEMENT=>[
+                ArticleType::NAME=>[
                     'pictureFile'=>$this->getFile('pic')
                 ]
             ],
@@ -93,15 +91,15 @@ class ArticleControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Article::ONE],array_keys($resp));
 
-        $element = $resp[self::BASE_ELEMENT];
+        $element = $resp[Article::ONE];
 
         $client->request(
             'PUT',
-            sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']),
+            sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']),
             [
-                self::BASE_ELEMENT=>[
+                ArticleType::NAME=>[
                     'author'=>'text',
                     'date'=> date('Y-m-d H:i',time()+1000),
                     'text'=>'text',
@@ -119,20 +117,20 @@ class ArticleControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Article::ONE],array_keys($resp));
 
-        $this->getElements(sprintf("/api/%s",self::BASE_ELEMENT_ROUTE),[self::BASE_ELEMENTS]);
-        $this->getElements(sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']),[self::BASE_ELEMENT]);
+        $this->getElements(sprintf("/api/%s",ArticleController::DEF_ROUTE),[Article::MANY]);
+        $this->getElements(sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']),[Article::ONE]);
 
         //file manipulation
-        $this->deleteElement(sprintf('/api/%s/%d/files/%d',self::BASE_ELEMENT_ROUTE,$element['id'],$element['picture']));
+        $this->deleteElement(sprintf('/api/%s/%d/files/%d',ArticleController::DEF_ROUTE,$element['id'],$element['picture']));
 
         $client->request(
             'POST',
-            sprintf("/api/%s/%d/files",self::BASE_ELEMENT_ROUTE,$element['id']),
+            sprintf("/api/%s/%d/files",ArticleController::DEF_ROUTE,$element['id']),
             [],
             [
-                self::BASE_ELEMENT=>[
+                ArticleType::NAME=>[
                     'pictureFile'=>$this->getFile('pic')
                 ]
             ],
@@ -142,8 +140,8 @@ class ArticleControllerTest extends BaseControllerTest
         );
 
         $resp = json_decode($client->getResponse()->getContent(),true);
-        $this->assertEquals([self::BASE_ELEMENT],array_keys($resp));
+        $this->assertEquals([Article::ONE],array_keys($resp));
 
-        $this->deleteElement(sprintf("/api/%s/%d",self::BASE_ELEMENT_ROUTE,$element['id']));
+        $this->deleteElement(sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']));
     }
 }

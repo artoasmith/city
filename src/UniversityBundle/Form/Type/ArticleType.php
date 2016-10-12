@@ -14,8 +14,7 @@ use Symfony\Component\Form\AbstractType;
 
 class ArticleType  extends AbstractType
 {
-    const name = 'uniArticle';
-    const names = 'uniArticles';
+    const NAME = 'uniArticle';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -35,7 +34,7 @@ class ArticleType  extends AbstractType
 
     public function getBlockPrefix()
     {
-        return self::name;
+        return self::NAME;
     }
 
 

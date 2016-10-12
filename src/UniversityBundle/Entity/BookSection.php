@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class BookSection
 {
+    const ONE = 'uniBookSection';
+    const MANY = 'uniBookSections';
+
     /**
      * @var int
      *

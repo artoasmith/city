@@ -2,17 +2,15 @@
 
 namespace UniversityBundle\Form\Type;
 
-use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 
 class BookSectionType extends AbstractType
 {
-    const name = 'uniBookSection';
-    const names = 'uniBookSections';
+    const NAME = 'uniBookSection';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -24,7 +22,7 @@ class BookSectionType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return self::name;
+        return self::NAME;
     }
 
 

@@ -20,6 +20,8 @@ class Book
 {
     const DEF_PICTURE_FOLDER = 'images/uniBook';
     const DEF_FILE_FOLDER = 'files/uniBook';
+    const ONE = 'uniBook';
+    const MANY = 'uniBooks';
 
     /**
      * @var int

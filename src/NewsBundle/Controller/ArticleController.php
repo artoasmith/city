@@ -19,13 +19,15 @@ use ApiBundle\Controller\DefaultController as ApiController;
 
 class ArticleController extends ApiController
 {
+    const DEF_ROUTE = 'newsArticles';
+
     /**
      * @ApiDoc(
      *  section="News",
      *  resource=true,
      *  description="Delete article element picture",
      * )
-     * @Annotations\Delete("/api/news_articles/{id}/files/{file_id}");
+     * @Annotations\Delete("/api/newsArticles/{id}/files/{file_id}");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_UPDATE')")
      */
     public function deleteArticlesPicture(Request $request,$id=0,$file_id=0)
@@ -41,7 +43,7 @@ class ArticleController extends ApiController
         $manager->remove($article->getPicture()->deleteFile());
         $manager->flush();
 
-        return $this->view(['article'=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -51,7 +53,7 @@ class ArticleController extends ApiController
      *  description="Update article element picture",
      *  input="NewsBundle\Form\Type\ArticlePictureType"
      * )
-     * @Annotations\Post("/api/news_articles/{id}/files");
+     * @Annotations\Post("/api/newsArticles/{id}/files");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_UPDATE')")
      */
     public function postArticlesPicture(Request $request,$id=0)
@@ -91,7 +93,7 @@ class ArticleController extends ApiController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->view(['article'=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -101,7 +103,7 @@ class ArticleController extends ApiController
      *  description="Create article element",
      *  input="NewsBundle\Form\Type\ArticleType"
      * )
-     * @Annotations\Post("/api/news_articles");
+     * @Annotations\Post("/api/newsArticles");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_CREATE')")
      */
     public function postArticles(Request $request)
@@ -133,7 +135,11 @@ class ArticleController extends ApiController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->view(['article'=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        if($article->getTags()){
+            $this->tagsManipulator('add','NewsBundle:Article',$article->getTags());
+        }
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -143,7 +149,7 @@ class ArticleController extends ApiController
      *  description="Update article element",
      *  input="NewsBundle\Form\Type\ArticleType"
      * )
-     * @Annotations\Put("/api/news_articles/{id}");
+     * @Annotations\Put("/api/newsArticles/{id}");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_UPDATE')")
      */
     public function putArticles(Request $request,$id=0)
@@ -155,7 +161,7 @@ class ArticleController extends ApiController
         if(!$article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-
+        $oldTags = $article->getTags();
         $form = $this->createForm(new ArticleType(),$article,array('method' => 'PUT'))
             ->handleRequest($request);
         $article = $form->getData();
@@ -170,7 +176,15 @@ class ArticleController extends ApiController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->view(['article'=>$article],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $needRem = array_diff($oldTags,$article->getTags());
+        if($needRem)
+            $this->tagsManipulator('remove','NewsBundle:Article',$needRem);
+
+        $needAdd = array_diff($article->getTags(),$oldTags);
+        if($needAdd)
+            $this->tagsManipulator('add','NewsBundle:Article',$needAdd);
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     /**
@@ -179,7 +193,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Delete article element"
      * )
-     * @Annotations\Delete("/api/news_articles/{id}");
+     * @Annotations\Delete("/api/newsArticles/{id}");
      * @Security("is_granted('ROLE_NEWS_ARTICLE_DELETE')")
      */
     public function deleteArticles(Request $request,$id=0)
@@ -201,10 +215,10 @@ class ArticleController extends ApiController
         $manager->remove($article);
         $manager->flush();
 
-        return $this->view(['article'=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $this->tagsManipulator('remove','NewsBundle:Article',$article->getTags());
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_DELETE_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
-
-
 
     /**
      * @ApiDoc(
@@ -212,7 +226,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Get article elements"
      * )
-     * @Annotations\Get("/api/news_articles");
+     * @Annotations\Get("/api/newsArticles");
      * @Annotations\QueryParam(name="article[id]", description="element object")
      * @Annotations\QueryParam(name="article[title]", description="element title")
      * @Annotations\QueryParam(name="article[date]", description="element date")
@@ -226,7 +240,7 @@ class ArticleController extends ApiController
     public function getArticlesList(Request $request)
     {
         $arr = $request->query->all();
-        return $this->view(['articles'=>$this->matching('article','NewsBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
+        return $this->view([Article::MANY=>$this->matching('article','NewsBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
                     ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
@@ -236,7 +250,7 @@ class ArticleController extends ApiController
      *  resource=true,
      *  description="Get article element"
      * )
-     * @Annotations\Get("/api/news_articles/{id}");
+     * @Annotations\Get("/api/newsArticles/{id}");
      */
     public function getArticles(Request $request,$id=0)
     {
@@ -247,6 +261,6 @@ class ArticleController extends ApiController
         if(!$article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view(['article'=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 }

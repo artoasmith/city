@@ -86,6 +86,11 @@ class BaseControllerTest extends WebTestCase
         }
     }
 
+    public function assertKeys($waiting, $client){
+        $resp = json_decode($client->getResponse()->getContent(),true);
+        $this->assertEquals($waiting,array_keys($resp));
+        return $resp;
+    }
     /*
         protected $file;
         protected $image;

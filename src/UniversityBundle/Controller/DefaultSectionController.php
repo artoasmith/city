@@ -13,6 +13,7 @@ use FOS\RestBundle\Controller\Annotations;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use FOS\RestBundle;
 use ApiBundle\Controller\DefaultController as ApiController;
+use UniversityBundle\Entity\ArticleSection;
 
 class DefaultSectionController extends ApiController
 {
@@ -20,7 +21,7 @@ class DefaultSectionController extends ApiController
         $form = $this->createForm($form,$object)
             ->handleRequest($request);
         /**
-         * @var SectionEvent $object
+         * @var ArticleSection $object
          * @var SectionEventType $form
          */
         $object = $form->getData();
@@ -37,7 +38,7 @@ class DefaultSectionController extends ApiController
         $manager->persist($object);
         $manager->flush();
 
-        return $this->view([$form->getName()=>$object],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([$object::ONE=>$object],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     public function putSectionElement($request,$form,$id,$repository){
@@ -58,7 +59,7 @@ class DefaultSectionController extends ApiController
         $manager->persist($section);
         $manager->flush();
 
-        return $this->view([$form->getName()=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        return $this->view([$section::ONE=>$section],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
     }
 
     public function deleteSectionElement($id,$repository,$key){

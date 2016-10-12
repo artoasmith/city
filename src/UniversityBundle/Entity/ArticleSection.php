@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ArticleSection
 {
+    const ONE = 'uniArticleSection';
+    const MANY = 'uniArticleSections';
+
     /**
      * @var int
      *
