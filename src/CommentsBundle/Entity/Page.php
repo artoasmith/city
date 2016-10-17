@@ -28,6 +28,11 @@ class Page
      */
     private $date;
 
+    /**
+     * @var integer
+     * @ORM\Column(name="commentsCount", type="integer", nullable=true)
+     */
+    private $commentsCount = 0;
 
     /**
      * Get id
@@ -60,5 +65,28 @@ class Page
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * Set commentsCount
+     *
+     * @param integer $commentsCount
+     * @return Page
+     */
+    public function setCommentsCount($commentsCount)
+    {
+        $this->commentsCount = $commentsCount;
+
+        return $this;
+    }
+
+    /**
+     * Get commentsCount
+     *
+     * @return integer
+     */
+    public function getCommentsCount()
+    {
+        return $this->commentsCount;
     }
 }

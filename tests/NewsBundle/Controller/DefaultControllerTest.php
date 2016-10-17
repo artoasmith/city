@@ -23,7 +23,9 @@ class DefaultControllerTest extends BaseControllerTest
             "/api/".SectionController::DEF_ROUTE,
             [
                 SectionType::NAME=>[
-                    'title'=>'test'
+                    'title'=>'test',
+                    'metaDescription'=>'desc desc',
+                    'metaKeyWords'=>'words words'
                 ]
             ],
             [],
@@ -40,7 +42,9 @@ class DefaultControllerTest extends BaseControllerTest
             sprintf("/api/%s/%d",SectionController::DEF_ROUTE,$section['id']),
             [
                 SectionType::NAME=>[
-                    'title'=>'test 22'
+                    'title'=>'test 22',
+                    'metaDescription'=>'desc desc',
+                    'metaKeyWords'=>'words words'
                 ]
             ],
             [],
@@ -74,7 +78,11 @@ class DefaultControllerTest extends BaseControllerTest
                     'text'=>'text',
                     'sections'=>[
                         $section['id']
-                    ]
+                    ],
+                    'description'=>'sd',
+                    'metaTitle'=>'sd',
+                    'metaDescription'=>'ds',
+                    'metaKeyWords'=>'ds'
                 ]
             ],
             [
@@ -101,7 +109,11 @@ class DefaultControllerTest extends BaseControllerTest
                     'text'=>'text',
                     'sections'=>[
                         $section['id']
-                    ]
+                    ],
+                    'description'=>'sd',
+                    'metaTitle'=>'sd',
+                    'metaDescription'=>'ds',
+                    'metaKeyWords'=>'ds'
                 ]
             ],
             [],

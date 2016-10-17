@@ -51,6 +51,9 @@ class DefaultController extends FOSRestController
         $data = $form->getData();
 
         $manager = $this->getDoctrine()->getManager();
+        /**
+         * @var Comment $page
+         */
         //check sourse for find/create CommentsBundle:Page element
         $page = null;
         if($data['newsArticle']){
@@ -107,6 +110,12 @@ class DefaultController extends FOSRestController
         //position
         $comment->setPosition(($comment->getParentComment()?$comment->getParentComment()->getPosition():$comment->getId()));
         $manager->persist($comment);
+
+        //page comment count
+        $cnt = intval($page->getCommentsCount())+1;
+        $page->setCommentsCount($cnt);
+        $manager->persist($page);
+
         $manager->flush();
 
         return $this->view(['comment'=>$comment],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
@@ -185,6 +194,12 @@ class DefaultController extends FOSRestController
                 $manager->persist($comment->getParentComment()->setHasChild(false));
             }
         }
+
+
+        //comments count
+        $cnt = $comment->getPage()->getCommentsCount()-1;
+        $cnt = ($cnt?intval($cnt):0);
+        $manager->persist($comment->getPage()->setCommentsCount($cnt));
 
         $manager->remove($comment);
         $manager->flush();

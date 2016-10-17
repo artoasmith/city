@@ -19,6 +19,8 @@ class SectionType extends AbstractType
         $builder
             ->add('title',HiddenType::class)
             ->add('parentSection',EntityType::class,['class' => 'NewsBundle:Section', 'empty_data' => null])
+            ->add('metaDescription', HiddenType::class)
+            ->add('metaKeyWords', HiddenType::class)
         ;
     }
 

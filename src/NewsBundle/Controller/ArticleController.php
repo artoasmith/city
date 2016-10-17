@@ -16,6 +16,7 @@ use NewsBundle\Form\Type\ArticlePictureType;
 use FOS\RestBundle;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use ApiBundle\Controller\DefaultController as ApiController;
+use FOS\RestBundle\Context\Context;
 
 class ArticleController extends ApiController
 {
@@ -93,7 +94,12 @@ class ArticleController extends ApiController
         $manager->persist($article);
         $manager->flush();
 
-        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $context = new Context();
+        $context->addGroup('details');
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)
+                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig')
+                    ->setContext($context);
     }
 
     /**
@@ -131,7 +137,8 @@ class ArticleController extends ApiController
         }
 
         $manager = $this->getDoctrine()->getManager();
-        $manager->persist($article->getPicture());
+        if($article->getPicture())
+            $manager->persist($article->getPicture());
         $manager->persist($article);
         $manager->flush();
 
@@ -139,7 +146,12 @@ class ArticleController extends ApiController
             $this->tagsManipulator('add','NewsBundle:Article',$article->getTags());
         }
 
-        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $context = new Context();
+        $context->addGroup('details');
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_POST_CODE)
+                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig')
+                    ->setContext($context);
     }
 
     /**
@@ -184,7 +196,12 @@ class ArticleController extends ApiController
         if($needAdd)
             $this->tagsManipulator('add','NewsBundle:Article',$needAdd);
 
-        return $this->view([Article::ONE=>$article],Error::SUCCESS_PUT_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $context = new Context();
+        $context->addGroup('details');
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_PUT_CODE)
+                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig')
+                    ->setContext($context);
     }
 
     /**
@@ -239,9 +256,13 @@ class ArticleController extends ApiController
      */
     public function getArticlesList(Request $request)
     {
+        $context = new Context();
+        $context->addGroup('list');
+
         $arr = $request->query->all();
         return $this->view([Article::MANY=>$this->matching('article','NewsBundle:Article', $arr)],Error::SUCCESS_GET_CODE)
-                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+                    ->setTemplate('ApiErrorBundle:Default:unformat.html.twig')
+                    ->setContext($context);
     }
 
     /**
@@ -261,6 +282,9 @@ class ArticleController extends ApiController
         if(!$article)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        return $this->view([Article::ONE=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig');
+        $context = new Context();
+        $context->addGroup('details');
+
+        return $this->view([Article::ONE=>$article],Error::SUCCESS_GET_CODE)->setTemplate('ApiErrorBundle:Default:unformat.html.twig')->setContext($context);
     }
 }

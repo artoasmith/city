@@ -24,7 +24,7 @@ class Article
 
     /**
      * @var int
-     *
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -34,6 +34,7 @@ class Article
     /**
      * @var string
      * @Assert\NotBlank()
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="title", type="string", length=2048)
      */
     private $title;
@@ -49,6 +50,20 @@ class Article
     private $picture;
 
     /**
+     * @var bool
+     * @Serializer\Groups({"list", "details"})
+     * @ORM\Column(name="hasVideo", type="boolean", nullable=true)
+     */
+    private $hasVideo = false;
+
+    /**
+     * @var bool
+     * @Serializer\Groups({"list", "details"})
+     * @ORM\Column(name="hasImg", type="boolean", nullable=true)
+     */
+    private $hasImg = false;
+
+    /**
      * @Serializer\Exclude()
      * @Assert\File(maxSize="10000000")
      */
@@ -57,13 +72,14 @@ class Article
     /**
      * @var \DateTime
      * @Assert\NotBlank()
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="date", type="datetime")
      */
     private $date;
 
     /**
      * @var array
-     *
+     * @Serializer\Groups({"details"})
      * @ORM\Column(name="tags", type="array", nullable=true)
      */
     private $tags;
@@ -71,6 +87,7 @@ class Article
     /**
      * @var string
      * @Assert\NotBlank()
+     * @Serializer\Groups({"details"})
      * @ORM\Column(name="text", type="text")
      */
     private $text;
@@ -78,6 +95,7 @@ class Article
     /**
      * @var array
      * @Assert\NotBlank()
+     * @Serializer\Groups({"details"})
      * @ORM\Column(name="sections", type="array")
      */
     private $sections;
@@ -101,6 +119,41 @@ class Article
      * })
      */
     private $user;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"list", "details"})
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaTitle", type="string", length=2048, nullable=true)
+     */
+    private $metaTitle;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaDescription", type="text", nullable=true)
+     */
+    private $metaDescription;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaKeyWords", type="text", nullable=true)
+     */
+    private $metaKeyWords;
+
+    /**
+     * @var integer
+     * @Serializer\Groups({"list", "details"})
+     * @ORM\Column(name="views", type="integer", nullable=true)
+     */
+    private $views;
 
     /**
      * Get id
@@ -254,6 +307,7 @@ class Article
     /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("picture")
+     * @Serializer\Groups({"list", "details"})
      * @return string
      */
     public function getPictureId()
@@ -264,6 +318,7 @@ class Article
     /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("pictureUrl")
+     * @Serializer\Groups({"list", "details"})
      * @return string
      */
     public function getPictureUrl()
@@ -307,6 +362,19 @@ class Article
     }
 
     /**
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("commentsCount")
+     * @Serializer\Groups({"list", "details"})
+     * @return string
+     */
+    public function getCommentsCount()
+    {
+        if(!$this->commentPage)
+            return 0;
+        return intval($this->commentPage->getCommentsCount());
+    }
+
+    /**
      * @return mixed
      */
     public function getPictureFile()
@@ -347,11 +415,174 @@ class Article
     /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("user")
+     * @Serializer\Groups({"details"})
      * @return int|boolean
      */
     public function getUserId()
     {
         return ($this->user?$this->user->getId():false);
+    }
+
+    /**
+     * Set hasVideo
+     *
+     * @param boolean $hasVideo
+     * @return Article
+     */
+    public function setHasVideo($hasVideo)
+    {
+        $this->hasVideo = $hasVideo;
+
+        return $this;
+    }
+
+    /**
+     * Get hasVideo
+     *
+     * @return boolean
+     */
+    public function getHasVideo()
+    {
+        return $this->hasVideo;
+    }
+
+    /**
+     * Set hasImg
+     *
+     * @param boolean $hasImg
+     * @return Article
+     */
+    public function setHasImg($hasImg)
+    {
+        $this->hasImg = $hasImg;
+
+        return $this;
+    }
+
+    /**
+     * Get hasImg
+     *
+     * @return boolean
+     */
+    public function getHasImg()
+    {
+        return $this->hasImg;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Article
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set metaTitle
+     *
+     * @param string $metaTitle
+     * @return Article
+     */
+    public function setMetaTitle($metaTitle)
+    {
+        $this->metaTitle = $metaTitle;
+
+        return $this;
+    }
+
+    /**
+     * Get metaTitle
+     *
+     * @return string
+     */
+    public function getMetaTitle()
+    {
+        return ($this->metaTitle?$this->metaTitle:$this->title);
+    }
+
+    /**
+     * Set metaDescription
+     *
+     * @param string $metaDescription
+     * @return Article
+     */
+    public function setMetaDescription($metaDescription)
+    {
+        $this->metaDescription = $metaDescription;
+
+        return $this;
+    }
+
+    /**
+     * Get metaDescription
+     *
+     * @return string
+     */
+    public function getMetaDescription()
+    {
+        return ($this->metaDescription?$this->metaDescription:$this->description);
+    }
+
+
+    /**
+     * Set metaKeyWords
+     *
+     * @param string $metaKeyWords
+     * @return Article
+     */
+    public function setMetaKeyWords($metaKeyWords)
+    {
+        $this->metaKeyWords = $metaKeyWords;
+
+        return $this;
+    }
+
+    /**
+     * Get metaKeyWords
+     *
+     * @return string
+     */
+    public function getMetaKeyWords()
+    {
+        return $this->metaKeyWords;
+    }
+
+    /**
+     * Set views
+     *
+     * @param integer $views
+     * @return Article
+     */
+    public function setViews($views)
+    {
+        $this->views = $views;
+
+        return $this;
+    }
+
+    /**
+     * Get views
+     *
+     * @return string
+     */
+    public function getViews()
+    {
+        return $this->views;
     }
 
     /**
@@ -387,5 +618,16 @@ class Article
                 $this->sections = $resp;
             }
         }
+    }
+
+    public function checkTextInner(){
+        if(!$this->text)
+            return;
+
+        if(preg_match("/(<img|<svg)/",$this->text))
+            $this->hasImg = true;
+
+        if(preg_match("/(<iframe)/",$this->text))
+            $this->hasVideo = true;
     }
 }

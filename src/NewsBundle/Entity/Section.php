@@ -30,6 +30,7 @@ class Section
     /**
      * @var string
      * @Assert\NotBlank()
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
@@ -50,6 +51,20 @@ class Section
      * @ORM\Column(name="position", type="integer", nullable=true)
      */
     private $position;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaDescription", type="text", nullable=true)
+     */
+    private $metaDescription;
+
+    /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaKeyWords", type="text", nullable=true)
+     */
+    private $metaKeyWords;
 
     /**
      * Get id
@@ -110,6 +125,7 @@ class Section
     /**
      * @Serializer\VirtualProperty
      * @Serializer\SerializedName("parentSection")
+     * @Serializer\Groups({"list", "details"})
      * @return integer|boolean
      */
     public function getParentSectionId()
@@ -138,6 +154,54 @@ class Section
     public function getPosition()
     {
         return $this->position;
+    }
+
+
+    /**
+     * Set metaDescription
+     *
+     * @param string $metaDescription
+     * @return Section
+     */
+    public function setMetaDescription($metaDescription)
+    {
+        $this->metaDescription = $metaDescription;
+
+        return $this;
+    }
+
+    /**
+     * Get metaDescription
+     *
+     * @return string
+     */
+    public function getMetaDescription()
+    {
+        return $this->metaDescription;
+    }
+
+
+    /**
+     * Set metaKeyWords
+     *
+     * @param string $metaKeyWords
+     * @return Section
+     */
+    public function setMetaKeyWords($metaKeyWords)
+    {
+        $this->metaKeyWords = $metaKeyWords;
+
+        return $this;
+    }
+
+    /**
+     * Get metaKeyWords
+     *
+     * @return string
+     */
+    public function getMetaKeyWords()
+    {
+        return $this->metaKeyWords;
     }
 
     /**

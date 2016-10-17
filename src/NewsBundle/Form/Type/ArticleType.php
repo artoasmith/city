@@ -21,7 +21,7 @@ class ArticleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title',HiddenType::class)
+            ->add('title', HiddenType::class)
             ->add('pictureFile',FileType::class)
             ->add('date',DateType::class,array(
                 'widget' => 'single_text',
@@ -30,6 +30,10 @@ class ArticleType extends AbstractType
             ->add('tags',CollectionType::class,['entry_type'=>HiddenType::class,'allow_add'=>true])
             ->add('text',HiddenType::class)
             ->add('sections',CollectionType::class,['entry_type'=>IntegerType::class,'allow_add'=>true])
+            ->add('description', HiddenType::class)
+            ->add('metaTitle', HiddenType::class)
+            ->add('metaDescription', HiddenType::class)
+            ->add('metaKeyWords', HiddenType::class)
         ;
     }
 
