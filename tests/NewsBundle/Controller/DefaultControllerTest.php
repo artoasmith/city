@@ -9,6 +9,7 @@ use NewsBundle\Form\Type\SectionType;
 use NewsBundle\Form\Type\ArticleType;
 use NewsBundle\Controller\ArticleController;
 use NewsBundle\Controller\SectionController;
+use FileBundle\Entity\File;
 
 class DefaultControllerTest extends BaseControllerTest
 {
@@ -73,6 +74,7 @@ class DefaultControllerTest extends BaseControllerTest
             [
                 ArticleType::NAME=>[
                     'title'=>'text',
+                    'author'=>'article',
                     'date'=> date('Y-m-d H:i',time()+1000),
                     'tags'=>['type','text'],
                     'text'=>'text',
@@ -95,7 +97,7 @@ class DefaultControllerTest extends BaseControllerTest
             ]
         );
 
-        $resp = $this->assertKeys([Article::ONE],$client);
+        $resp = $this->assertKeys([Article::ONE,File::MANY],$client);
         $element = $resp[Article::ONE];
 
         $client->request(
@@ -104,6 +106,7 @@ class DefaultControllerTest extends BaseControllerTest
             [
                 ArticleType::NAME=>[
                     'title'=>'text',
+                    'author'=>'article',
                     'date'=> date('Y-m-d H:i',time()+1000),
                     'tags'=>['type','text'],
                     'text'=>'text',
@@ -121,10 +124,12 @@ class DefaultControllerTest extends BaseControllerTest
                 'HTTP_Authorization'=>$this->access_token
             ]
         );
-        $this->assertKeys([Article::ONE],$client);
 
-        $this->getElements(sprintf("/api/%s",ArticleController::DEF_ROUTE),[Article::MANY]);
-        $this->getElements(sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']),[Article::ONE]);
+        $this->assertKeys([Article::ONE,File::MANY],$client);
+
+        $this->getElements(sprintf("/api/%s/autocomplete",ArticleController::DEF_ROUTE),['items'],['sections'=>$section['id'],'field'=>'title','q'=>'te']);
+        $this->getElements(sprintf("/api/%s",ArticleController::DEF_ROUTE),[Article::MANY,'meta']);
+        $this->getElements(sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']),[Article::ONE,File::MANY]);
 
         //file manipulation
         $this->deleteElement(sprintf('/api/%s/%d/files/%d',ArticleController::DEF_ROUTE,$element['id'],$element['picture']));
@@ -142,7 +147,8 @@ class DefaultControllerTest extends BaseControllerTest
                 'HTTP_Authorization'=>$this->access_token
             ]
         );
-        $this->assertKeys([Article::ONE],$client);
+
+        $this->assertKeys([Article::ONE,File::MANY],$client);
 
         $this->deleteElement(sprintf("/api/%s/%d",ArticleController::DEF_ROUTE,$element['id']));
     }

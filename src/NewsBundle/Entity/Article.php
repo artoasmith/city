@@ -19,6 +19,8 @@ use NewsBundle\NewsBundle;
 class Article
 {
     const DEF_PICTURE_FOLDER = 'images/newsArticle';
+    const DEF_FILE_FOLDER = 'files/newsArticle';
+
     const ONE = 'newsArticle';
     const MANY = 'newsArticles';
 
@@ -122,6 +124,14 @@ class Article
 
     /**
      * @var string
+     * @Assert\NotBlank()
+     * @Serializer\Groups({"list", "details"})
+     * @ORM\Column(name="author", type="string", length=255, nullable=true)
+     */
+    private $author;
+
+    /**
+     * @var string
      * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="description", type="text", nullable=true)
      */
@@ -154,6 +164,19 @@ class Article
      * @ORM\Column(name="views", type="integer", nullable=true)
      */
     private $views;
+
+    /**
+     * @var array
+     */
+    private $files;
+
+    /**
+     * @var array
+     * @Serializer\SerializedName("files")
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="files", type="array", nullable=true)
+     */
+    private $filesArray;
 
     /**
      * Get id
@@ -578,11 +601,82 @@ class Article
     /**
      * Get views
      *
-     * @return string
+     * @return integer
      */
     public function getViews()
     {
         return $this->views;
+    }
+
+    /**
+     * Set files
+     *
+     * @param array $files
+     * @return Article
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    /**
+     * Get files
+     *
+     * @return array
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Set filesArray
+     *
+     * @param array $filesArray
+     * @return Article
+     */
+    public function setFilesArray($filesArray)
+    {
+        $this->filesArray = $filesArray;
+
+        return $this;
+    }
+
+    /**
+     * Get filesArray
+     *
+     * @return array
+     */
+    public function getFilesArray()
+    {
+        return $this->filesArray;
+    }
+
+
+    /**
+     * Set author
+     *
+     * @param string $author
+     *
+     * @return Article
+     */
+    public function setAuthor($author)
+    {
+        $this->author = $author;
+
+        return $this;
+    }
+
+    /**
+     * Get author
+     *
+     * @return string
+     */
+    public function getAuthor()
+    {
+        return $this->author;
     }
 
     /**

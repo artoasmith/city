@@ -24,18 +24,26 @@ class DefaultController extends Controller
 
         if(!is_array($files))
             $files = [$files];
-
+        /**
+         * @var UploadedFile $f
+         */
+        foreach ($files as $f){
+            if($f->getError())
+                throw new FileException('Загруженный файл "'.$f->getClientOriginalName().'"слишком большой. Пожалуйста, попробуйте загрузить файл меньшего размера.');
+        }
         /**
          * @var UploadedFile $file
          */
         foreach ($files as $file){
             $expansion = DefaultController::getExpansion($file->getMimeType());
+
             if(!$expansion || ($expectedType && $expectedType != $expansion))
                 throw  new FileException('Недопустимый тип');
         }
 
         $res = [];
-        $folder = str_replace('//','/',sprintf('%s/../../../web/upload/%s/',__DIR__,$folder));
+        $folder = sprintf('upload/%s/',$folder);
+        $folderPath = str_replace('//','/',sprintf('%s/../../../web/%s',__DIR__,$folder));
         foreach ($files as $file){
             $expansion = DefaultController::getExpansion($file->getMimeType());
 
@@ -56,7 +64,7 @@ class DefaultController extends Controller
             );
 
             $filename = $newName . '.' . $format;
-            $file->move($folder, $filename);
+            $file->move($folderPath, $filename);
 
             $fileEntity = new File();
             $fileEntity->setDate(new \DateTime())
@@ -81,11 +89,43 @@ class DefaultController extends Controller
                 'image/png',
                 'image/jpeg'
             ],
+            File::VIDEO_TYPE=>[
+                'video/msvideo',
+                'video/avi',
+                'video/x-msvideo',
+                'video/mpeg',
+                'video/quicktime'
+            ],
             File::FILE_TYPE => [
-
+                'application/pdf',
+                'application/msword',
+                'application/x-excel',
+                'application/excel',
+                'application/vnd.ms-excel',
+                'application/x-msexcel',
+                'application/rtf',
+                'application/x-rtf',
+                'text/richtext',
+                'text/plain',
+                'powerpoint',
+                'image/vnd.djvu',
+                'image/x-djvu',
+                'application/mspowerpoint',
+                'application/vnd.ms-powerpoint',
+                'model/x-pov',
+                'application/vnd.ms-office',
+                'application/mspowerpoint',
+                'application/vnd.ms-powerpoint',
+                'application/mspowerpoint',
+                'application/powerpoint',
+                'application/vnd.ms-powerpoint',
+                'application/x-mspowerpoint',
+                'application/mspowerpoint',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.template'
             ],
             File::PDF_TYPE => [
-
+                'application/pdf'
             ]
         ];
 

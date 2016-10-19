@@ -3,6 +3,7 @@
 namespace FileBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * File
@@ -15,27 +16,32 @@ class File
     const PIC_TYPE = 'picture';
     const FILE_TYPE = 'file';
     const PDF_TYPE = 'pdf';
+    const VIDEO_TYPE = 'video';
 
     const FILE_PREFIX = 'http://city.loc/';
+
+    const ONE = 'file';
+    const MANY = 'files';
     /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
+     * @Serializer\Groups({"list", "details"})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
-     *
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 
     /**
      * @var \DateTime
-     *
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="date", type="datetime")
      */
     private $date;
@@ -63,7 +69,7 @@ class File
 
     /**
      * @var string
-     *
+     * @Serializer\Groups({"list", "details"})
      * @ORM\Column(name="originalName", type="string", length=255)
      */
     private $originalName;
@@ -220,6 +226,12 @@ class File
         return $this->getFolder().$this->getSourse();
     }
 
+    /**
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("url")
+     * @Serializer\Groups({"list", "details"})
+     * @return string
+     */
     public function getUrl(){
         return self::FILE_PREFIX.$this->getFile();
     }

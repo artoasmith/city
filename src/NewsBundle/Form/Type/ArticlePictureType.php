@@ -8,13 +8,10 @@
 
 namespace NewsBundle\Form\Type;
 
-use Propel\Bundle\PropelBundle\Form\BaseAbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use UniversityBundle\Entity\ArticleSection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ArticlePictureType extends AbstractType
@@ -23,6 +20,7 @@ class ArticlePictureType extends AbstractType
     {
         $builder
             ->add('pictureFile',FileType::class)
+            ->add('files',CollectionType::class,['entry_type'=>FileType::class,'allow_add'=>true])
         ;
     }
 

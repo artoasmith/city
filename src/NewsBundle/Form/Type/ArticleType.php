@@ -22,7 +22,9 @@ class ArticleType extends AbstractType
     {
         $builder
             ->add('title', HiddenType::class)
+            ->add('author', HiddenType::class)
             ->add('pictureFile',FileType::class)
+            ->add('files',CollectionType::class,['entry_type'=>FileType::class,'allow_add'=>true])
             ->add('date',DateType::class,array(
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm',

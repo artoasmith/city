@@ -27,52 +27,283 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 use ApiErrorBundle\Entity\Error;
 use ApiBundle\Entity\Tag;
+use ApiBundle\Classes\MatchPriorItem;
+use Doctrine\DBAL\Exception\SyntaxErrorException;
 
 class DefaultController extends FOSRestController
 {
     /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @POST("/api")
-     * @Security("is_granted('ROLE_USER')")
+     * @return array
      */
-    public function getDemosAction(Request $request)
-    {
-        /**
-         * @var User $user
-         */
-        $user = $this->getUser();
-        $data = array("hello" => $user);
-
-        $view = $this->view($data);
-        return $this->handleView($view);
-
-        $files = $request->files->get('key');
-        try{
-            $files = FileController::upload($files,'images');
-        } catch (FileException $e){
-            $view = $this->view(['error'=>$e->getMessage()],422);
-            return $this->handleView($view);
-        }
+    public function priorityMatching($key='', $repository='', $fields = [], $priorMap=[]){
+        $resp = [
+            'items'=>[],
+            'meta'=>[
+                'total'=>0,
+                'selected'=>0
+            ]
+        ];
 
         /**
-         * @var ImageHandling $imageHandling
-         * @var File $file
+         * @var EntityRepository $repo
          */
-        $imageHandling = $this->get('image.handling');
-        foreach ($files as $file){
-            $imageHandling->open($file->getFile())
-                          ->grayscale()
-                          ->rotate(12)
-                          ->save(sprintf('%s/%d/%s',$file->getFolder(),$file->getId(),$file->getSourse()));
-            $file->deleteFile();
-        }
-        $data = array("hello" => $user);
+        $repo = $this->getDoctrine()->getRepository($repository);
+        if(!$repo)
+            return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        $view = $this->view($data);
-        return $this->handleView($view);
+        $arrayCallBack = $this->getCallBacks();
+        //entity fields set
+        $fieldSet = array_merge(
+            $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->fieldMappings,
+            $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->associationMappings
+        );
+
+        $tableAlt = $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->table['name'];
+        $tableAlt = "`$tableAlt`";
+
+        $params = [' 1'];
+        $totalParams = [' 1'];
+
+        $select = [
+            'main'=>["$tableAlt.id as id"],
+            'total'=>['COUNT(1) as cnt'],
+            'spec'=>['COUNT(1) as cnt']
+        ];
+
+        $priceFieldTitle = 'priceFieldTitle2';
+        $price = [0];
+
+        foreach ($fieldSet as $field){
+            if(isset($filterFields[$field['fieldName']])){
+                /**
+                 * @var MatchPriorItem $priorElement
+                 */
+                $priorElement = (isset($priorMap[$field['fieldName']])?$priorMap[$field['fieldName']]:false);
+                $val = false;
+                if(!is_array($filterFields[$field['fieldName']]))
+                    $filterFields[$field['fieldName']] = [$filterFields[$field['fieldName']]];
+                //build query param
+                switch ($field['type']){
+                    case 'integer':
+                        //sector check
+                        if($check = $this->checkSector($filterFields[$field['fieldName']],$arrayCallBack['integer'])){
+                            $val = sprintf($check,$tableAlt,$field['fieldName']);
+                            if($priorElement){
+                                $price = array_merge($price,$priorElement->buildPriceString($val));
+                            }
+                            break;
+                        }
+                    case 2: // entity type from associationMappings
+                        if(
+                            (count($filterFields[$field['fieldName']])==1 && empty($filterFields[$field['fieldName']][0]))
+                            ||
+                            in_array($filterFields[$field['fieldName']][0],['null','Null','NULL'])
+                        ){
+                            $val = sprintf(' %s.%s IS NULL',$tableAlt,$field['fieldName']);
+                            if($priorElement)
+                                $price = array_merge($price,$priorElement->buildPriceString($val));
+                            break;
+                        }
+                        $val = array_map($arrayCallBack['integer'],$filterFields[$field['fieldName']]);
+                        $val = array_unique($val);
+                        if($priorElement)
+                            $price = array_merge($price,$priorElement->buildPriceString($val));
+                        $val = sprintf(' %s.%s IN (%s)',$tableAlt,$field['fieldName'],implode(', ',$val));
+                        break;
+                    case 'datetime':
+                        if($check = $this->checkSector($filterFields[$field['fieldName']],$arrayCallBack['datetimefull'])){
+                            $val = sprintf($check,$tableAlt,$field['fieldName']);
+                            if($priorElement)
+                                $price = array_merge($price,$priorElement->buildPriceString($val));
+                            break;
+                        }
+                    case 'array':
+                    case 'text':
+                    case 'string':
+                        $val = array_map($arrayCallBack[$field['type']],$filterFields[$field['fieldName']]);
+                        $val = array_filter($val);
+                        $val = array_unique($val);
+                        foreach ($val as $key=>$elem){
+                            $val[$key] = " LOWER({$tableAlt}.`{$field['fieldName']}`) LIKE LOWER({$elem})";
+                        }
+                        if($val){
+                            if($priorElement)
+                                $price = array_merge($price,$priorElement->buildPriceString($val));
+                            $val = sprintf(" (%s)",implode(' OR',$val));
+                        }
+                        break;
+                }
+
+                if($val){
+                    $params[] = $val;
+                    if($priorElement && $priorElement->getTotalVariable())
+                        $totalParams[] = $val;
+                }
+            }
+        }
+
+        $sort = [];
+        if(count($price)>1){
+            $sort[] = " $priceFieldTitle DESC";
+        }
+
+        if(isset($fields['_sort']) && is_array($fields['_sort'])){
+            foreach ($fields['_sort'] as $key=>$param){
+                $param = (in_array($param,['DESC','desc','Desc'])?'DESC':'ASC');
+                if(isset($fieldSet[$key])){
+                    $sort[] = " {$tableAlt}.`{$key}` $param";
+                }
+            }
+        }
+
+        $offset = (isset($fields['_offset']) && $fields['_offset']>0?intval($fields['_offset']):0);
+        $limit = (isset($fields['_limit']) && $fields['_limit']>0?intval($fields['_limit']):30);
+
+        //price str
+        $select['main'][] = implode('+',$price)." AS $priceFieldTitle";
+
+        //build query
+        $query = sprintf(
+            'SELECT %s FROM %s WHERE %s %s LIMIT %d,%d',
+            implode(', ',$select['main']),
+            $tableAlt,
+            implode(' AND',$params),
+            ($sort?'ORDER BY '.implode(' ,',$sort):''),
+            $offset,
+            $limit
+        );
+        try {
+            $stmt = $this->getDoctrine()->getManager()
+                ->getConnection()
+                ->prepare(
+                    $query
+                );
+            $stmt->execute();
+            $ideas = $stmt->fetchAll();
+        }catch (SyntaxErrorException $e){
+            return $resp;
+        }
+
+        if(!$ideas)
+            return $resp;
+
+        $ideas = array_map($arrayCallBack['_response'],$ideas);
+        $obj = $repo->findBy(['id'=>$ideas]);
+
+        //resort response
+        $ideas_copy = $ideas;
+        foreach ($obj as $element){
+            if(false !== $key = array_search($element->getId(),$ideas_copy))
+                $ideas[$key] = $element;
+        }
+
+        $obj = array_filter($ideas,$arrayCallBack['_resort']);
+        $resp['items'] = $obj;
+
+        //total count
+        $queryTotal = sprintf(
+            'SELECT %s FROM %s WHERE %s ',
+            implode(', ',$select['total']),
+            $tableAlt,
+            implode(' AND',$totalParams)
+        );
+
+        $ideasTotal = null;
+        try {
+            $stmt = $this->getDoctrine()->getManager()
+                ->getConnection()
+                ->prepare(
+                    $queryTotal
+                );
+            $stmt->execute();
+            $ideasTotal = $stmt->fetchAll();
+        }catch (SyntaxErrorException $e){}
+        $resp['meta']['total'] = ($ideasTotal && isset($ideasTotal[0]) && isset($ideasTotal[0]['cnt'])?intval($ideasTotal[0]['cnt']):0);
+
+        //selected count
+        $selectedTotal = sprintf(
+            'SELECT %s FROM %s WHERE %s ',
+            implode(', ',$select['spec']),
+            $tableAlt,
+            implode(' AND',$params)
+        );
+        $ideasSpec = null;
+        try {
+            $stmt = $this->getDoctrine()->getManager()
+                ->getConnection()
+                ->prepare(
+                    $selectedTotal
+                );
+            $stmt->execute();
+            $ideasSpec = $stmt->fetchAll();
+        }catch (SyntaxErrorException $e){}
+        $resp['meta']['selected'] = ($ideasSpec && isset($ideasSpec[0]) && isset($ideasSpec[0]['cnt'])?intval($ideasSpec[0]['cnt']):0);
+
+        return $resp;
     }
 
-    public function matching($key='', $repository='', array $fields = array(), $requestSpecParams=[])
+    private function checkSector($val,$callback){
+
+        if(!is_array($val) || (!isset($val['from']) && !isset($val['to'])))
+            return false;
+
+        $from = (isset($var['from'])?$callback($var['from']):null);
+        $to   = (isset($var['to'])  ?$callback($var['to'])  :null);
+
+        $f = [];
+        if($from){
+            $f[] = ' %1$s.%2$2 >= '.$from;
+        }
+        if($to){
+            $f[] = ' %1$s.%2$2 <= '.$to;
+        }
+        return implode(' AND',$f);
+    }
+
+    private function getCallBacks(){
+        return [
+            'integer' => function($a){
+                return intval($a);
+            },
+            'string' => function($a){
+                $a = strval((is_array($a)?'':$a));
+                $a = str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],$a);
+                return "'%$a%'";
+            },
+            'datetimefull'=>function($a){
+                $a = strval((is_array($a)?'':$a));
+                $time = strtotime($a);
+                if(!$time)
+                    return false;
+                return date("'Y-m-d H:i:s'",$time);
+            },
+            'datetime' => function($a){
+                $a = strval((is_array($a)?'':$a));
+                $time = strtotime($a);
+                if(!$time)
+                    return false;
+                return date("'Y-m-d%'",$time);
+            },
+            'array' => function($a){
+                $a = strval((is_array($a)?'':$a));
+                $a = str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],$a);
+                return "'%\"$a\"%'";
+            },
+            'arraySpec'=>function($a){
+                $a = strval((is_array($a)?'':$a));
+                $a = str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],$a);
+            return "%\"%$a%\"%";
+        },
+            '_response' => function($a){
+                return $a['id'];
+            },
+            '_resort' => function($a){
+                return is_object($a);
+            }
+        ];
+    }
+
+    public function matching($key='', $repository='', array $fields = array(), $requestSpecParams=[], $specCallback=[])
     {
         /**
          * @var EntityRepository $repo
@@ -81,33 +312,7 @@ class DefaultController extends FOSRestController
         if(!$repo)
             return $this->view(['error'=>Error::NOT_FOUNT_TEXT],Error::NOT_FOUND_CODE)->setTemplate('ApiErrorBundle:Default:error.html.twig');
 
-        $arrayCallBack = [
-            'integer' => function($a){
-                return intval($a);
-            },
-            'string' => function($a){
-                $a = strval((is_array($a)?'':$a));
-                return str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],$a);
-            },
-            'datetime' => function($a){
-                $a = strval((is_array($a)?'':$a));
-                $time = strtotime($a);
-                if(!$time)
-                    return false;
-                return date('Y-m-d',$time);
-            },
-            'array' => function($a){
-                $a = strval((is_array($a)?'':$a));
-                $a = str_replace(['\'','"','`','%','_',';'],['_','_','_','\%','\_'],$a);
-                return "\"$a\"";
-            },
-            '_response' => function($a){
-                return $a['id'];
-            },
-            '_resort' => function($a){
-                return is_object($a);
-            }
-        ];
+        $arrayCallBack = $this->getCallBacks();
 
         //entity fields set
         $fieldSet = array_merge(
@@ -131,6 +336,11 @@ class DefaultController extends FOSRestController
                 $val = false;
                 if(!is_array($filterFields[$field['fieldName']]))
                     $filterFields[$field['fieldName']] = [$filterFields[$field['fieldName']]];
+
+                $altCall = $field['type'];
+                if(isset($specCallback[$field['fieldName']]) && isset($arrayCallBack[$field['type'].'Spec']))
+                    $altCall = $field['type'].'Spec';
+
                 //build query param
                 switch ($field['type']){
                     case 2: // entity type from associationMappings
@@ -152,11 +362,11 @@ class DefaultController extends FOSRestController
                     case 'text':
                     case 'datetime':
                     case 'string':
-                        $val = array_map($arrayCallBack[$field['type']],$filterFields[$field['fieldName']]);
+                        $val = array_map($arrayCallBack[$altCall],$filterFields[$field['fieldName']]);
                         $val = array_filter($val);
                         $val = array_unique($val);
                         foreach ($val as $key=>$elem){
-                            $val[$key] = " LOWER({$tableAlt}.`{$field['fieldName']}`) LIKE LOWER('%{$elem}%')";
+                            $val[$key] = " LOWER({$tableAlt}.`{$field['fieldName']}`) LIKE LOWER({$elem})";
                         }
                         if($val)
                             $val = sprintf(" (%s)",implode(' OR',$val));
@@ -187,7 +397,7 @@ class DefaultController extends FOSRestController
             'SELECT %1$s.id as id FROM %1$s WHERE %2$s %3$s LIMIT %4$d,%5$d',
             $tableAlt,
             implode(' AND',$params),
-            ($sort?implode(' ,',$sort):''),
+            ($sort?'ORDER BY '.implode(' ,',$sort):''),
             $offset,
             $limit
         );

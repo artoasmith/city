@@ -67,6 +67,13 @@ class Section
     private $metaKeyWords;
 
     /**
+     * @var string
+     * @Serializer\Groups({"details"})
+     * @ORM\Column(name="metaTitle", type="string", length=2048, nullable=true)
+     */
+    private $metaTitle;
+
+    /**
      * Get id
      *
      * @return integer
@@ -202,6 +209,30 @@ class Section
     public function getMetaKeyWords()
     {
         return $this->metaKeyWords;
+    }
+
+
+    /**
+     * Set metaTitle
+     *
+     * @param string $metaTitle
+     * @return Section
+     */
+    public function setMetaTitle($metaTitle)
+    {
+        $this->metaTitle = $metaTitle;
+
+        return $this;
+    }
+
+    /**
+     * Get metaTitle
+     *
+     * @return string
+     */
+    public function getMetaTitle()
+    {
+        return ($this->metaTitle?$this->metaTitle:$this->title);
     }
 
     /**
