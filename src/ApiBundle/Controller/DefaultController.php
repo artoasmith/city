@@ -60,6 +60,7 @@ class DefaultController extends FOSRestController
 
         $tableAlt = $this->getDoctrine()->getManager()->getClassMetadata($repo->getClassName())->table['name'];
         $tableAlt = "`$tableAlt`";
+        $filterFields = (isset($fields[$key])?$fields[$key]:[]);
 
         $params = [' 1'];
         $totalParams = [' 1'];
@@ -72,6 +73,14 @@ class DefaultController extends FOSRestController
 
         $priceFieldTitle = 'priceFieldTitle2';
         $price = [0];
+
+        $laxParameters = [];
+        if(isset($fields['_laxParameters'])){
+            if(is_array($fields['_laxParameters']))
+                $laxParameters = $fields['_laxParameters'];
+            elseif (is_string($fields['_laxParameters']))
+                $laxParameters = [$fields['_laxParameters']];
+        }
 
         foreach ($fieldSet as $field){
             if(isset($filterFields[$field['fieldName']])){
@@ -135,9 +144,11 @@ class DefaultController extends FOSRestController
                 }
 
                 if($val){
-                    $params[] = $val;
-                    if($priorElement && $priorElement->getTotalVariable())
-                        $totalParams[] = $val;
+                    if(!in_array($field['fieldName'],$laxParameters) || !$priorElement){
+                        $params[] = $val;
+                        if($priorElement && $priorElement->getTotalVariable())
+                            $totalParams[] = $val;
+                    }
                 }
             }
         }
@@ -172,6 +183,7 @@ class DefaultController extends FOSRestController
             $offset,
             $limit
         );
+
         try {
             $stmt = $this->getDoctrine()->getManager()
                 ->getConnection()

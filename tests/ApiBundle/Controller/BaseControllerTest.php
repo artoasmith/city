@@ -91,31 +91,6 @@ class BaseControllerTest extends WebTestCase
         $this->assertEquals($waiting,array_keys($resp));
         return $resp;
     }
-    /*
-        protected $file;
-        protected $image;
-
-        public function setUp()
-        {
-            $this->file =
-            imagepng(imagecreatetruecolor(10, 10), $this->file); // create and write image/png to it
-            $this->image = new UploadedFile(
-                $this->file,
-                'new_image.png'
-            );
-        }
-
-        public function testMime()
-        {
-            $res = $file->getMimeType();
-            $this->assertEquals('image/png', $res);
-        }
-
-        public function tearDown()
-        {
-            unlink($this->file);
-        }
-    */
 
     public function testBase(){
         $this->assertTrue(true);

@@ -81,7 +81,7 @@ class Article
 
     /**
      * @var array
-     * @Serializer\Groups({"details"})
+     * @Serializer\Groups({"list","details"})
      * @ORM\Column(name="tags", type="array", nullable=true)
      */
     private $tags;
@@ -266,7 +266,7 @@ class Article
      */
     public function setTags($tags)
     {
-        $this->tags = $tags;
+        $this->tags = (is_array($tags)?array_values($tags):[]);
 
         return $this;
     }
@@ -278,7 +278,7 @@ class Article
      */
     public function getTags()
     {
-        return $this->tags;
+        return (is_array($this->tags)?array_values($this->tags):[]);
     }
 
     /**

@@ -380,10 +380,13 @@ class ArticleController extends ApiController
      * @Annotations\Get("/api/newsArticles");
      * @Annotations\QueryParam(name="article[id]", description="element object")
      * @Annotations\QueryParam(name="article[title]", description="element title")
+     * @Annotations\QueryParam(name="article[author]", description="element author")
      * @Annotations\QueryParam(name="article[date]", description="element date")
      * @Annotations\QueryParam(name="article[tags]", description="element tags")
      * @Annotations\QueryParam(name="article[text]", description="element text")
      * @Annotations\QueryParam(name="article[sections]", description="element sections")
+     *
+     * @Annotations\QueryParam(name="_laxParameters", description="Lax parameters in search (if they have search price value)('sections','tags','title','author')")
      * @Annotations\QueryParam(name="_sort", default={"id":"ASC"})
      * @Annotations\QueryParam(name="_limit",  requirements="\d+", nullable=true, strict=true)
      * @Annotations\QueryParam(name="_offset", requirements="\d+", nullable=true, strict=true)
@@ -399,15 +402,15 @@ class ArticleController extends ApiController
              ->setPrice(1)
              ->setTotalVariable(true);
 
-        $priorItems = [$elem];
+        $priorItems = ['sections'=>$elem];
 
 
-        $priorItems[] = $elem->setField('tags')->setPrice(2)->setTotalVariable(false);
-        $priorItems[] = $elem->setField('tags')->setPrice(2)->setTotalVariable(false);
-        $priorItems[] = $elem->setField('tags')->setPrice(2)->setTotalVariable(false);
+        $priorItems['tags'] = $elem->setField('tags')->setPrice(2)->setTotalVariable(false);
+        $priorItems['title'] = $elem->setField('title')->setPrice(3)->setTotalVariable(false);
+        $priorItems['author'] = $elem->setField('author')->setPrice(2)->setTotalVariable(false);
 
 
-        $resp = $this->priorityMatching('article','NewsBundle:Article', $arr);
+        $resp = $this->priorityMatching('article','NewsBundle:Article', $arr, $priorItems);
         //var_dump($this->priorityMatching('article','NewsBundle:Article', $arr)); exit();
         return $this->view([Article::MANY=>$resp['items'],'meta'=>$resp['meta']],Error::SUCCESS_GET_CODE)
                     ->setTemplate('ApiErrorBundle:Default:unformat.html.twig')
